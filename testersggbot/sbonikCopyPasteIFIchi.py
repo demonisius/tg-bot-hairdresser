@@ -67,3 +67,31 @@ async def cmd_special_buttons(message: types.Message):
         ),
     )
     await message.answer("Выберите действие:", reply_markup=keyboard)
+
+
+# Команды Всякое разное
+@dp.message_handler(commands="test1")
+async def cmd_test1(message: types.Message):
+    await message.reply("Test 1")
+    await db.add(message.from_user.id, message.text)
+
+
+# Команды Всякое разное
+@dp.message_handler(commands="id")
+async def cmd_id(message: types.Message):
+    await message.reply(message.from_user.id)
+
+
+# Команда добавления записи  в БД
+@dp.message_handler(commands="ad")
+async def cmd_ad(message: types.Message):
+    await db.add(message.from_user.id, message.text)
+    await message.reply("ADD OK")
+
+
+# Команла добавления таблицы в БД
+@dp.message_handler(commands="cr")
+async def cmd_cr(message: types.Message):
+    await db.creat()
+    await message.reply(message.from_user.id)
+    await message.reply("Talbe creat")

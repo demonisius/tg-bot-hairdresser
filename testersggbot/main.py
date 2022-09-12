@@ -31,36 +31,12 @@ start_kb.row("Записаться на приём")  # , "Dialog Calendar")
 CMD Команды
 """
 
-
+# Команда начало бота, точка входа
 @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message):
     await message.answer(
         "Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar()
     )
-
-
-@dp.message_handler(commands="test1")
-async def cmd_test1(message: types.Message):
-    await message.reply("Test 1")
-    await db.add(message.from_user.id, message.text)
-
-
-@dp.message_handler(commands="id")
-async def cmd_id(message: types.Message):
-    await message.reply(message.from_user.id)
-
-
-@dp.message_handler(commands="ad")
-async def cmd_ad(message: types.Message):
-    await db.add(message.from_user.id, message.text)
-    await message.reply("ADD OK")
-
-
-@dp.message_handler(commands="cr")
-async def cmd_cr(message: types.Message):
-    await db.creat()
-    await message.reply(message.from_user.id)
-    await message.reply("Talbe creat")
 
 
 """
