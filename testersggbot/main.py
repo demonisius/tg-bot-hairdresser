@@ -31,6 +31,7 @@ start_kb.row("Записаться на приём")  # , "Dialog Calendar")
 CMD Команды
 """
 
+
 # Команда начало бота, точка входа
 @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message):
