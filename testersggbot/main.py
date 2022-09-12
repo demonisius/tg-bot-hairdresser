@@ -5,6 +5,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import Text
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup
 from aiogram.utils import executor
+from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
@@ -22,10 +23,13 @@ dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 
+
 start_kb = ReplyKeyboardMarkup(
     resize_keyboard=True,
 )
-start_kb.row("Записаться на приём")  # , "Dialog Calendar")
+
+# Кнопки внизу
+start_kb.row("Записаться на приём")
 
 """
 CMD Команды
@@ -43,6 +47,18 @@ async def cmd_start(message: types.Message):
 """
 CMD Команды
 """
+
+
+# Обработка блокировки бота пользователем
+@dp.errors_handler(exception=BotBlocked)
+async def error_bot_blocked(update: types.Update, exception: BotBlocked):
+    # Update: объект события от Telegram. Exception: объект исключения
+    # Здесь можно как-то обработать блокировку, например, удалить пользователя из БД
+    print(f"Меня заблокировал пользователь!\nСообщение: {update}\nОшибка: {exception}")
+
+    # Такой хэндлер должен всегда возвращать True,
+    # если дальнейшая обработка не требуется.
+    return True
 
 
 @dp.message_handler(Text(equals=["Записаться на приём"], ignore_case=True))
