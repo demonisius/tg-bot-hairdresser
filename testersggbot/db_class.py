@@ -141,6 +141,12 @@ class CLASSDB:
         except Exception:
             print("tg_bot_admin_profile ERR " + str(add_to))
 
+    def select_id_tg_ms_for_ig_msg(self, id_tg):
+        cur.execute("SELECT * FROM tg_bot_users_msg WHERE id_tg =" + str(id_tg))
+        conn.commit()
+        rows = cur.fetchall()
+        return list(rows)
+
 
 db_class = CLASSDB(
     id_tg=simIdTg,
@@ -150,9 +156,10 @@ db_class = CLASSDB(
     id_tg_name=simName,
 )
 
-print(db_class)
+# print(db_class)
+print(db_class.select_id_tg_ms_for_ig_msg("8628"))
 
-
+"""
 db_class.table_creat_users_profile()
 for counter in range(0, 10):
     db_class.table_insert_to_users_profile()
@@ -164,3 +171,4 @@ for counter in range(0, 10):
 db_class.table_creat_admin_profile()
 for counter in range(0, 10):
     db_class.table_insert_to_admin_profile()
+"""
