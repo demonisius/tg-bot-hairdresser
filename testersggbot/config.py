@@ -107,7 +107,6 @@ class WorkWindow:
             print(str(value))
         # return self.value
 
-
 # ww1 = WorkWindow()
 # print(ww1.work_hours_graf_1)
 # ww1.work_graf_1_cal_handler()
