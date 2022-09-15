@@ -153,16 +153,14 @@ db_class = CLASSDB(
 print(db_class)
 
 
-"""
 db_class.table_creat_users_profile()
-for counter in range(0, 100):
+for counter in range(0, 10):
     db_class.table_insert_to_users_profile()
 
 db_class.table_creat_users_msg()
-for counter in range(0, 100):
+for counter in range(0, 10):
     db_class.table_insert_to_users_msg()
 
 db_class.table_creat_admin_profile()
-for counter in range(0, 100):
+for counter in range(0, 10):
     db_class.table_insert_to_admin_profile()
-"""
