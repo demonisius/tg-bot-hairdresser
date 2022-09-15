@@ -22,10 +22,10 @@ class CLASSDB:
 
     def __init__(self, id_tg, id_tg_msg, id_tg_phone_num, id_tg_nick, id_tg_name):
         self.id_tg = id_tg
-        self.id_tg_msg = id_tg_msg
+        self.id_tg_msg = str(id_tg_msg)
         self.id_tg_phone_num = id_tg_phone_num
-        self.id_tg_nick = id_tg_nick
-        self.id_tg_name = id_tg_name
+        self.id_tg_nick = str(id_tg_nick)
+        self.id_tg_name = str(id_tg_name)
 
     def __str__(self):
         return str(
