@@ -12,6 +12,7 @@ cur = conn.cursor()
 
 
 class CLASSDB:
+
     """
     Класс для работы с ДБ
     Профили пользователей
@@ -29,88 +30,116 @@ class CLASSDB:
     def __str__(self):
         return str(
             [
-                self.id_tg,
-                self.id_tg_msg,
-                self.id_tg_phone_num,
-                self.id_tg_nick,
-                self.id_tg_name,
+                [self.id_tg],
+                [self.id_tg_msg],
+                [self.id_tg_phone_num],
+                [self.id_tg_nick],
+                [self.id_tg_name],
             ]
         )
 
     # Создание таблицы для профилей пользователей
     def table_creat_users_profile(self):
-        cur.execute(
-            """
-            CREATE TABLE IF NOT EXISTS "tg_bot_users_profile" (
-            "id"	INTEGER,
-            "id_tg"	INTEGER,
-            "id_tg_phone_num"	INTEGER,
-            "id_tg_nick" TEXT,
-            "id_tg_name" TEXT,
-            PRIMARY KEY("id" AUTOINCREMENT)
-            );
-            """
-        )
-        conn.commit()
-        return print("tg_bot_users_profile CREAT")
+        try:
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS "tg_bot_users_profile" (
+                "id"	INTEGER,
+                "id_tg"	INTEGER,
+                "id_tg_phone_num"	INTEGER,
+                "id_tg_nick" TEXT,
+                "id_tg_name" TEXT,
+                PRIMARY KEY("id" AUTOINCREMENT)
+                );
+                """
+            )
+            conn.commit()
+            return print("tg_bot_users_profile CREAT")
+        except Exception:
+            return print("tg_bot_users_profile ERR")
 
     # Добаление нового профиля пользователя
     def table_insert_to_users_profile(self):
-        add_to = (self.id_tg, self.id_tg_phone_num, self.id_tg_nick, self.id_tg_name)
-        cur.execute(
-            "INSERT INTO tg_bot_users_profile VALUES(null, ?, ?, ?, ?);", add_to
-        )
-        conn.commit()
-        return print("tg_bot_users_profile ADD " + str(add_to))
+        try:
+            add_to = (
+                self.id_tg,
+                self.id_tg_phone_num,
+                self.id_tg_nick,
+                self.id_tg_name,
+            )
+            cur.execute(
+                "INSERT INTO tg_bot_users_profile VALUES(null, ?, ?, ?, ?);", add_to
+            )
+            conn.commit()
+            return print("tg_bot_users_profile ADD " + str(add_to))
+        except Exception:
+            return print("tg_bot_users_profile ERR " + str(add_to))
 
     # Создание таблицы для логирования сообщений
     def table_creat_users_msg(self):
-        cur.execute(
-            """
-            CREATE TABLE IF NOT EXISTS "tg_bot_users_msg" (
-            "id"	INTEGER,
-            "id_tg"	INTEGER,
-            "id_tg_msg"	TEXT,
-            PRIMARY KEY("id" AUTOINCREMENT)
-            );
-            """
-        )
-        conn.commit()
-        return print("tg_bot_users_msg CREAT")
+        try:
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS "tg_bot_users_msg" (
+                "id"	INTEGER,
+                "id_tg"	INTEGER,
+                "id_tg_msg"	TEXT,
+                PRIMARY KEY("id" AUTOINCREMENT)
+                );
+                """
+            )
+            conn.commit()
+            return print("tg_bot_users_msg CREAT")
+        except Exception:
+            return print("tg_bot_users_msg ERR")
 
     # Логирования сообщений
     def table_insert_to_users_msg(self):
-        add_to = (self.id_tg, self.id_tg_msg)
-        cur.execute("INSERT INTO tg_bot_users_msg VALUES(null, ?, ?);", add_to)
-        conn.commit()
-        return print("tg_bot_users_msg ADD " + str(add_to))
+        try:
+            add_to = (self.id_tg, self.id_tg_msg)
+            cur.execute("INSERT INTO tg_bot_users_msg VALUES(null, ?, ?);", add_to)
+            conn.commit()
+            return print("tg_bot_users_msg ADD " + str(add_to))
+        except Exception:
+            return print("tg_bot_users_msg ERR " + str(add_to))
 
     # Создание таблицы админиситраторов бота
 
     def table_creat_admin_profile(self):
-        cur.execute(
-            """
-            CREATE TABLE IF NOT EXISTS "tg_bot_admin_profile" (
-            "id"	INTEGER,
-            "id_tg"	INTEGER,
-            "id_tg_phone_num"	INTEGER,
-            "id_tg_nick" TEXT,
-            "id_tg_name" TEXT,
-            PRIMARY KEY("id" AUTOINCREMENT)
-            );
-            """
-        )
-        conn.commit()
-        return print("tg_bot_users_profile CREAT")
+        try:
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS "tg_bot_admin_profile" (
+                "id"	INTEGER,
+                "id_tg"	INTEGER,
+                "id_tg_phone_num"	INTEGER,
+                "id_tg_nick" TEXT,
+                "id_tg_name" TEXT,
+                PRIMARY KEY("id" AUTOINCREMENT)
+                );
+                """
+            )
+            conn.commit()
+            return print("tg_bot_users_profile CREAT")
+        except Exception:
+            return print("tg_bot_users_profile ERR")
 
     # Добаление админиситраторов бота
     def table_insert_to_admin_profile(self):
-        add_to = (self.id_tg, self.id_tg_phone_num, self.id_tg_nick, self.id_tg_name)
-        cur.execute(
-            "INSERT INTO tg_bot_admin_profile VALUES(null, ?, ?, ?, ?);", add_to
-        )
-        conn.commit()
-        return print("tg_bot_admin_profile ADD " + str(add_to))
+        try:
+            add_to = (
+                self.id_tg,
+                self.id_tg_phone_num,
+                self.id_tg_nick,
+                self.id_tg_name,
+            )
+            cur.execute(
+                "INSERT INTO tg_bot_admin_profile VALUES(null, ?, ?, ?, ?);", add_to
+            )
+            conn.commit()
+            return print("tg_bot_admin_profile ADD " + str(add_to))
+        except Exception:
+            print("tg_bot_admin_profile ERR " + str(add_to))
 
 
 db_class = CLASSDB(
@@ -123,6 +152,8 @@ db_class = CLASSDB(
 
 print(db_class)
 
+
+"""
 db_class.table_creat_users_profile()
 for counter in range(0, 100):
     db_class.table_insert_to_users_profile()
@@ -134,5 +165,4 @@ for counter in range(0, 100):
 db_class.table_creat_admin_profile()
 for counter in range(0, 100):
     db_class.table_insert_to_admin_profile()
-
-
+"""
