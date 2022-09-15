@@ -3,7 +3,6 @@ import sqlite3
 conn = sqlite3.connect("db/database.db")
 cur = conn.cursor()
 
-
 async def add(id_tg, id_tg_msg):
     add_to = (id_tg, id_tg_msg)
     cur.execute("INSERT INTO users VALUES(null, ?, ?);", add_to)
@@ -19,6 +18,5 @@ async def creat():
         """
     )
     conn.commit()
-
 
 # class DBCMD:
