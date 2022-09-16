@@ -1,5 +1,5 @@
-import sqlite3
 import random
+import sqlite3
 
 simIdTg = random.randint(1000, 9999)
 simPhone = random.randint(10000, 99999)

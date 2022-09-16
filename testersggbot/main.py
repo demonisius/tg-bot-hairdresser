@@ -101,6 +101,7 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
             "Теперь выберите время", reply_markup=keyboard
         )
 
+
 # Генератов расписания времени
 
 # Подмешали свои колл бэки
@@ -109,7 +110,7 @@ cb_work_time = CallbackData("work_time", "w_time")
 
 @dp.callback_query_handler(text="send_work_time")
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
-    #await call.message.answer("Пожалуйтса выберите время визита: ")
+    # await call.message.answer("Пожалуйтса выберите время визита: ")
 
     menu_kb_inl = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
     counter = 0
