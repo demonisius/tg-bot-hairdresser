@@ -1,7 +1,8 @@
+import datetime
+
 import telebot
 from telebot import types
 from telebot_calendar import Calendar, CallbackData, RUSSIAN_LANGUAGE
-import datetime
 
 bot = telebot.TeleBot("5685322861:AAEoKnTXVE_20NudE-RKo-CRCwcIVul9uyY")
 calendar = Calendar(language=RUSSIAN_LANGUAGE)

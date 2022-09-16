@@ -1,5 +1,4 @@
 import logging
-from random import randint
 
 from aiogram import Bot, Dispatcher
 from aiogram import types
@@ -7,23 +6,16 @@ from aiogram.dispatcher.filters import Text
 from aiogram.types import (
     Message,
     CallbackQuery,
-    ReplyKeyboardRemove,
     ReplyKeyboardMarkup,
-    KeyboardButton,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    ReplyKeyboardMarkup,
-    ReplyKeyboardRemove,
 )
 from aiogram.utils import executor
-from aiogram.utils.exceptions import BotBlocked
 from aiogram.utils.callback_data import CallbackData
+from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
 )
 
-import db
 from config import WorkWindow
 
 ww1 = WorkWindow()
