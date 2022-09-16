@@ -4,9 +4,20 @@ from random import randint
 from aiogram import Bot, Dispatcher
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    ReplyKeyboardRemove,
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+)
 from aiogram.utils import executor
 from aiogram.utils.exceptions import BotBlocked
+from aiogram.utils.callback_data import CallbackData
 from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
@@ -89,43 +100,59 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
         await callback_query.message.answer(
             "Теперь выберите время", reply_markup=keyboard
         )
-        # await work_cal_handler(work_cal_handler())
-
-
-# dialog calendar usage
 
 # Генератов расписания времени
+
+# Подмешали свои колл бэки
+cb_work_time = CallbackData("work_time", "w_time")
+
+
 @dp.callback_query_handler(text="send_work_time")
-# @dp.message_handler(Text(equals=["Теперь время"], ignore_case=True))
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
-    await call.message.answer("Пожалуйтса выберите время визита: ")
+    #await call.message.answer("Пожалуйтса выберите время визита: ")
 
     menu_kb_inl = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
     counter = 0
     for value in ww1.work_hours_graf_1[0:-1]:
         button_inl_work_clock1 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter],
-            callback_data=ww1.work_hours_graf_1[counter],
+            # callback_data=ww1.work_hours_graf_1[counter],
+            callback_data=cb_work_time.new(w_time=str(ww1.work_hours_graf_1[counter])),
         )
         button_inl_work_clock2 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 1],
-            callback_data=ww1.work_hours_graf_1[counter + 1],
+            # callback_data=ww1.work_hours_graf_1[counter + 1],
+            callback_data=cb_work_time.new(
+                w_time=str(ww1.work_hours_graf_1[counter + 1])
+            ),
         )
         button_inl_work_clock3 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 2],
-            callback_data=ww1.work_hours_graf_1[counter + 2],
+            # callback_data=ww1.work_hours_graf_1[counter + 2],
+            callback_data=cb_work_time.new(
+                w_time=str(ww1.work_hours_graf_1[counter + 2])
+            ),
         )
         button_inl_work_clock4 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 3],
-            callback_data=ww1.work_hours_graf_1[counter + 3],
+            # callback_data=ww1.work_hours_graf_1[counter + 3],
+            callback_data=cb_work_time.new(
+                w_time=str(ww1.work_hours_graf_1[counter + 3])
+            ),
         )
         button_inl_work_clock5 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 4],
-            callback_data=ww1.work_hours_graf_1[counter + 4],
+            # callback_data=ww1.work_hours_graf_1[counter + 4],
+            callback_data=cb_work_time.new(
+                w_time=str(ww1.work_hours_graf_1[counter + 4])
+            ),
         )
         button_inl_work_clock6 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 5],
-            callback_data=ww1.work_hours_graf_1[counter + 5],
+            # callback_data=ww1.work_hours_graf_1[counter + 5],
+            callback_data=cb_work_time.new(
+                w_time=str(ww1.work_hours_graf_1[counter + 5])
+            ),
         )
         menu_kb_inl.add(
             button_inl_work_clock1,
@@ -138,33 +165,23 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
         counter += 6
         if counter == 24:
             break
-
+    await call.message.delete_reply_markup()
     await call.message.answer("Выберите время: ", reply_markup=menu_kb_inl)
-    # if  select:
-    #    print("sssss")
 
 
-@dp.message_handler(commands="random")
-async def cmd_random(message: types.Message):
-    keyboard = types.InlineKeyboardMarkup()
-    keyboard.add(
-        types.InlineKeyboardButton(text="Нажми меня", callback_data="random_value")
-    )
-    await message.answer(
-        "Нажмите на кнопку, чтобы бот отправил число от 1 до 10", reply_markup=keyboard
-    )
-
-
-# @dp.callback_query_handler(text="random_value")
-# async def send_random_value(call: types.CallbackQuery):
-#     await call.message.answer(str(randint(1, 10)))
-
-
-@dp.callback_query_handler(text="random_value")
-async def send_random_value(call: types.CallbackQuery):
-    await call.message.answer(str(randint(1, 10)))
-    await call.answer(text="Спасибо, что воспользовались ботом!", show_alert=True)
-    # или просто await call.answer()
+# Обработка нажатий кнопок с рабочим окном
+@dp.callback_query_handler(cb_work_time.filter())
+async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
+    # Обработка нажатий кнопок
+    w_time = callback_data["w_time"]
+    """
+    Проверяем коллбэк с кнопки на пустую строку
+    """
+    if not w_time == " ":
+        # print(w_time)
+        # Удаляет клавитуру
+        await call.message.delete_reply_markup()
+        await call.message.answer("Вы записаны на " + str(w_time))
 
 
 if __name__ == "__main__":

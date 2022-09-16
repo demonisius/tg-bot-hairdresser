@@ -95,3 +95,26 @@ async def cmd_cr(message: types.Message):
     await db.creat()
     await message.reply(message.from_user.id)
     await message.reply("Talbe creat")
+
+
+@dp.message_handler(commands="random")
+async def cmd_random(message: types.Message):
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(
+        types.InlineKeyboardButton(text="Нажми меня", callback_data="random_value")
+    )
+    await message.answer(
+        "Нажмите на кнопку, чтобы бот отправил число от 1 до 10", reply_markup=keyboard
+    )
+
+
+# @dp.callback_query_handler(text="random_value")
+# async def send_random_value(call: types.CallbackQuery):
+#     await call.message.answer(str(randint(1, 10)))
+
+
+@dp.callback_query_handler(text="random_value")
+async def send_random_value(call: types.CallbackQuery):
+    await call.message.answer(str(randint(1, 10)))
+    await call.answer(text="Спасибо, что воспользовались ботом!", show_alert=True)
+    # или просто await call.answer()
