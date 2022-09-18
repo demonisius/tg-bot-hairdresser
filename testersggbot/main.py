@@ -14,6 +14,9 @@ from aiogram_calendar import (
 
 from config import WorkWindow
 
+"""""" """""" """""KB""" ""
+from kb_router import kb_inl_cmd_start
+
 ww1 = WorkWindow()
 
 # Объект бота
@@ -23,14 +26,8 @@ dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 
-kb_start = ReplyKeyboardMarkup(
-    resize_keyboard=True,
-)
-
-
 """ Кастомные колбэки"""
 cb_work_time = CallbackData("work_time", "w_time")
-
 
 """Клавиатуры"""
 
@@ -40,6 +37,10 @@ kb_w_time.add(
 )
 
 """ Кнопки внизу"""
+kb_start = ReplyKeyboardMarkup(
+    resize_keyboard=True,
+)
+
 kb_start.row("Записаться на приём")
 
 
@@ -64,11 +65,10 @@ CMD Команды
 @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message):
     with open("img/hair-people-logo.png", "rb") as photo:
-        await message.answer_photo(photo=photo)
-
-    await message.answer(
-        "Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar()
-    )
+        await message.answer_photo(photo=photo, reply_markup=kb_inl_cmd_start.kb_inl)
+    # await message.answer(
+    #     "Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar()
+    # )
 
 
 """
