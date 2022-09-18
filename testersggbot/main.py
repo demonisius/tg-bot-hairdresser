@@ -3,11 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-from aiogram.types import (
-    Message,
-    CallbackQuery,
-    ReplyKeyboardMarkup,
-)
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, photo_size
 from aiogram.utils import executor
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.exceptions import BotBlocked
@@ -27,29 +23,24 @@ dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 
-start_kb = ReplyKeyboardMarkup(
+kb_start = ReplyKeyboardMarkup(
     resize_keyboard=True,
 )
 
-# Кнопки внизу
-start_kb.row("Записаться на приём")
 
-"""
-CMD Команды
-"""
+""" Кастомные колбэки"""
+cb_work_time = CallbackData("work_time", "w_time")
 
 
-# Команда начало бота, точка входа
-@dp.message_handler(commands="start")
-async def cmd_start(message: types.Message):
-    await message.answer(
-        "Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar()
-    )
+"""Клавиатуры"""
 
+kb_w_time = types.InlineKeyboardMarkup()
+kb_w_time.add(
+    types.InlineKeyboardButton(text="Нажми меня", callback_data="send_work_time")
+)
 
-"""
-CMD Команды
-"""
+""" Кнопки внизу"""
+kb_start.row("Записаться на приём")
 
 
 # Обработка блокировки бота пользователем
@@ -62,6 +53,27 @@ async def error_bot_blocked(update: types.Update, exception: BotBlocked):
     # Такой хэндлер должен всегда возвращать True,
     # если дальнейшая обработка не требуется.
     return True
+
+
+"""
+CMD Команды
+"""
+
+
+# Команда начало бота, точка входа
+@dp.message_handler(commands="start")
+async def cmd_start(message: types.Message):
+    with open("img/hair-people-logo.png", "rb") as photo:
+        await message.answer_photo(photo=photo)
+
+    await message.answer(
+        "Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar()
+    )
+
+
+"""
+CMD Команды
+"""
 
 
 @dp.message_handler(Text(equals=["Записаться на приём"], ignore_case=True))
@@ -79,32 +91,24 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
     )
     if selected:
         await callback_query.message.answer(
-            f'Вы выбрали {date.strftime("%d/%m/%Y")}', reply_markup=start_kb
+            f'Вы выбрали {date.strftime("%d/%m/%Y")}', reply_markup=kb_start
         )
-        keyboard = types.InlineKeyboardMarkup()
-        keyboard.add(
-            types.InlineKeyboardButton(
-                text="Нажми меня", callback_data="send_work_time"
-            )
-        )
+
         # await message.answer("Нажмите на кнопку, чтобы бот отправил число от 1 до 10", reply_markup=keyboard)
 
         await callback_query.message.answer(
-            "Теперь выберите время", reply_markup=keyboard
+            "Теперь выберите время", reply_markup=kb_w_time
         )
 
 
 # Генератов расписания времени
-
-# Подмешали свои колл бэки
-cb_work_time = CallbackData("work_time", "w_time")
 
 
 @dp.callback_query_handler(text="send_work_time")
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
     # await call.message.answer("Пожалуйтса выберите время визита: ")
 
-    menu_kb_inl = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
+    kb_inl_work_clock = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
     counter = 0
     for value in ww1.work_hours_graf_1[0:-1]:
         button_inl_work_clock1 = types.InlineKeyboardButton(
@@ -147,7 +151,7 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
                 w_time=str(ww1.work_hours_graf_1[counter + 5])
             ),
         )
-        menu_kb_inl.add(
+        kb_inl_work_clock.add(
             button_inl_work_clock1,
             button_inl_work_clock2,
             button_inl_work_clock3,
@@ -159,7 +163,7 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
         if counter == 24:
             break
     await call.message.delete_reply_markup()
-    await call.message.answer("Выберите время: ", reply_markup=menu_kb_inl)
+    await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
 
 
 # Обработка нажатий кнопок с рабочим окном

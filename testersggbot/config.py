@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.types import Message
-
+from lib import lib
 
 class WorkWindow:
     # Список с рабочими окнами
