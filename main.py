@@ -25,7 +25,7 @@ dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 
-""" Кастомные колбэки"""
+""" Кастомные колбэки """
 cb_work_time = CallbackData("work_time", "w_time")
 
 """Клавиатуры"""
@@ -35,7 +35,7 @@ kb_w_time.add(
     types.InlineKeyboardButton(text="Нажми меня", callback_data="send_work_time")
 )
 
-""" Кнопки внизу"""
+""" Кнопки внизу """
 kb_start = ReplyKeyboardMarkup(
     resize_keyboard=True,
 )
@@ -55,9 +55,7 @@ async def error_bot_blocked(update: types.Update, exception: BotBlocked):
     return True
 
 
-"""
-CMD Команды
-"""
+""" CMD Команды """
 
 
 # Команда начало бота, точка входа
@@ -75,7 +73,9 @@ async def callbacks_num(call: types.CallbackQuery):
     action = call.data.split("_")[1]
     if action == "services":
         await call.message.delete_reply_markup()
-        await call.message.answer(text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back)
+        await call.message.answer(
+            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+        )
         print("Услуги")
     if action == "masters":
         print("Мастера")
@@ -95,14 +95,9 @@ async def callbacks_num(call: types.CallbackQuery):
     await call.answer()
 
 
-"""
-CMD Команды
-"""
+""" CMD Команды """
 
-"""
-Start menu
-
-"""
+""" Start menu """
 
 
 @dp.message_handler(Text(equals=["Записаться"], ignore_case=True))
@@ -200,9 +195,7 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
 async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     # Обработка нажатий кнопок
     w_time = callback_data["w_time"]
-    """
-    Проверяем коллбэк с кнопки на пустую строку
-    """
+    """ Проверяем коллбэк с кнопки на пустую строку """
     if not w_time == " ":
         # print(w_time)
         # Удаляет клавитуру
