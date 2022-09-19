@@ -1,6 +1,9 @@
 from aiogram import types
 from aiogram.types import Message
+
+
 #####from lib import lib
+
 
 class WorkWindow:
     # Список с рабочими окнами
@@ -28,7 +31,7 @@ class WorkWindow:
         "17-00",
         "17-30",
         "18-00",
-        " "
+        " ",
     ]
     work_hours_graf_2 = [
         "8-00",
@@ -106,6 +109,7 @@ class WorkWindow:
         for value in self.work_hours_graf_1:
             print(str(value))
         # return self.value
+
 
 # ww1 = WorkWindow()
 # print(ww1.work_hours_graf_1)

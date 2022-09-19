@@ -34,7 +34,7 @@ kb_inl.add(button_inl_5)
 kb_inl_back = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=1)
 
 button_inl_back = types.InlineKeyboardButton(
-    text="Назад",
+    text=" ",
     callback_data="kbMenuStart_back",
 )
 kb_inl_back.add(button_inl_back)

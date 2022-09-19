@@ -3,15 +3,16 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ParseMode
 from aiogram.utils import executor
 from aiogram.utils.callback_data import CallbackData
+import aiogram.utils.markdown as fmt
 from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
 )
-
+import msg
 from config import WorkWindow
 
 from kb_router import kb_inl_cmd_start
@@ -72,25 +73,42 @@ async def callbacks_num(call: types.CallbackQuery):
     # Парсим строку и извлекаем действие, например `num_incr` -> `incr`
     action = call.data.split("_")[1]
     if action == "services":
+        await call.message.answer(msg.msg_services, parse_mode=ParseMode.HTML)
         await call.message.delete_reply_markup()
         await call.message.answer(
             text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
         )
-        print("Услуги")
+
     if action == "masters":
-        print("Мастера")
+        await call.message.answer(msg.msg_masters, parse_mode=ParseMode.HTML)
+        await call.message.delete_reply_markup()
+        await call.message.answer(
+            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+        )
+
     if action == "contacts":
-        print("Контакты")
+        await call.message.answer(msg.msg_contacts, parse_mode=ParseMode.HTML)
+        await call.message.delete_reply_markup()
+        await call.message.answer(
+            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+        )
     if action == "consult":
-        print("Косультация")
+        await call.message.answer(msg.msg_consult, parse_mode=ParseMode.HTML)
+        await call.message.delete_reply_markup()
+        await call.message.answer(
+            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+        )
     if action == "sign":
-        print("Записаться")
+        await call.message.answer(
+            "Записаться на приём: ",
+            reply_markup=await SimpleCalendar().start_calendar(),
+        )
+        pass
     if action == "back":
-        print("Назад")
+
         await call.message.delete_reply_markup()
         await call.message.answer(text="Назад", reply_markup=kb_inl_cmd_start.kb_inl)
 
-    print(action)
     # Не забываем отчитаться о получении колбэка
     await call.answer()
 
@@ -188,6 +206,7 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
             break
     await call.message.delete_reply_markup()  # Удаляем кнопки
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
+    await call.answer()
 
 
 # Обработка нажатий кнопок с рабочим окном
@@ -197,10 +216,12 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     w_time = callback_data["w_time"]
     """ Проверяем коллбэк с кнопки на пустую строку """
     if not w_time == " ":
-        # print(w_time)
-        # Удаляет клавитуру
-        await call.message.delete_reply_markup()
+        print(w_time)
+
+        # await call.message.edit_text("")
+        await call.message.delete_reply_markup() # Удаляет клавитуру
         await call.message.answer("Вы записаны на " + str(w_time))
+    await call.answer()
 
 
 if __name__ == "__main__":
