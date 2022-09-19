@@ -61,3 +61,4 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
             break
     await call.message.delete_reply_markup()
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
+

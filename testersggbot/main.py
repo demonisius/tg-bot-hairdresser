@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, photo_size
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup
 from aiogram.utils import executor
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.exceptions import BotBlocked
@@ -14,7 +14,6 @@ from aiogram_calendar import (
 
 from config import WorkWindow
 
-"""""" """""" """""KB""" ""
 from kb_router import kb_inl_cmd_start
 
 ww1 = WorkWindow()
@@ -66,17 +65,47 @@ CMD Команды
 async def cmd_start(message: types.Message):
     with open("img/hair-people-logo.png", "rb") as photo:
         await message.answer_photo(photo=photo, reply_markup=kb_inl_cmd_start.kb_inl)
-    # await message.answer(
-    #     "Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar()
-    # )
+        # await message.answer("Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar())
+
+
+# Обработка кнопок статового меню
+@dp.callback_query_handler(Text(startswith="kbMenuStart_"))
+async def callbacks_num(call: types.CallbackQuery):
+    # Парсим строку и извлекаем действие, например `num_incr` -> `incr`
+    action = call.data.split("_")[1]
+    if action == "services":
+        await call.message.delete_reply_markup()
+        await call.message.answer(text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back)
+        print("Услуги")
+    if action == "masters":
+        print("Мастера")
+    if action == "contacts":
+        print("Контакты")
+    if action == "consult":
+        print("Косультация")
+    if action == "sign":
+        print("Записаться")
+    if action == "back":
+        print("Назад")
+        await call.message.delete_reply_markup()
+        await call.message.answer(text="Назад", reply_markup=kb_inl_cmd_start.kb_inl)
+
+    print(action)
+    # Не забываем отчитаться о получении колбэка
+    await call.answer()
 
 
 """
 CMD Команды
 """
 
+"""
+Start menu
 
-@dp.message_handler(Text(equals=["Записаться на приём"], ignore_case=True))
+"""
+
+
+@dp.message_handler(Text(equals=["Записаться"], ignore_case=True))
 async def nav_cal_handler(message: Message):
     await message.answer(
         "Пожалуйтса выберите дату визита: ",
@@ -162,7 +191,7 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
         counter += 6
         if counter == 24:
             break
-    await call.message.delete_reply_markup()
+    await call.message.delete_reply_markup()  # Удаляем кнопки
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
 
 
