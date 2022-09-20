@@ -3,7 +3,13 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ParseMode
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    ReplyKeyboardMarkup,
+    ParseMode,
+    message,
+)
 from aiogram.utils import executor
 from aiogram.utils.callback_data import CallbackData
 import aiogram.utils.markdown as fmt
@@ -12,13 +18,12 @@ from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
 )
-
-import kb_router.kb_inl_w_time
+from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
+import kb_router
 import msg
 import cb_custom
-from config import WorkWindow
 
-from kb_router import kb_inl_cmd_start, kb_inl_w_time, kb_start
+from config import WorkWindow
 
 ww1 = WorkWindow()
 
@@ -27,10 +32,11 @@ bot = Bot(token="5685322861:AAEoKnTXVE_20NudE-RKo-CRCwcIVul9uyY")
 # Диспетчер для бота
 dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 """ Кастомные колбэки """
 cb_work_time = CallbackData("work_time", "w_time")
+
 
 # Обработка блокировки бота пользователем
 @dp.errors_handler(exception=BotBlocked)
@@ -51,7 +57,9 @@ async def error_bot_blocked(update: types.Update, exception: BotBlocked):
 @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message):
     with open("img/hair-people-logo.png", "rb") as photo:
-        await message.answer_photo(photo=photo, reply_markup=kb_inl_cmd_start.kb_inl)
+        await message.answer_photo(
+            photo=photo, reply_markup=kb_router.kb_inl_cmd_start.kb_inl
+        )
         # await message.answer("Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar())
 
 
@@ -65,7 +73,7 @@ async def callbacks_num(call: types.CallbackQuery):
             await call.message.answer(msg.msg_services, parse_mode=ParseMode.HTML)
             await call.message.delete_reply_markup()
             await call.message.answer(
-                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+                text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
             await call.answer()
@@ -74,7 +82,7 @@ async def callbacks_num(call: types.CallbackQuery):
             await call.message.answer(msg.msg_masters, parse_mode=ParseMode.HTML)
             await call.message.delete_reply_markup()
             await call.message.answer(
-                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+                text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
             await call.answer()
@@ -83,7 +91,7 @@ async def callbacks_num(call: types.CallbackQuery):
             await call.message.answer(msg.msg_contacts, parse_mode=ParseMode.HTML)
             await call.message.delete_reply_markup()
             await call.message.answer(
-                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+                text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
             await call.answer()
@@ -92,7 +100,7 @@ async def callbacks_num(call: types.CallbackQuery):
             await call.message.answer(msg.msg_consult, parse_mode=ParseMode.HTML)
             await call.message.delete_reply_markup()
             await call.message.answer(
-                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+                text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
             await call.answer()
@@ -163,7 +171,9 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
         button_inl_work_clock1 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter],
             # callback_data=ww1.work_hours_graf_1[counter],
-            callback_data=cb_custom.cb_work_time.new(w_time=str(ww1.work_hours_graf_1[counter])),
+            callback_data=cb_custom.cb_work_time.new(
+                w_time=str(ww1.work_hours_graf_1[counter])
+            ),
         )
         button_inl_work_clock2 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 1],
@@ -226,8 +236,30 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
         # print(w_time)
         await call.message.delete_reply_markup()  # Удаляет клавитуру
         await call.message.edit_text("Вы записаны на " + str(w_time))
+        await call.message.answer(
+            "Отправьте свой контакт для связи ",
+            reply_markup=kb_router.kb_share_user_contact.kb,
+        )
+
         await call.answer()
     await call.answer()
+
+
+# Обработка высланого контакта
+@dp.message_handler(content_types=[types.ContentType.CONTACT])
+async def msg_handler_to_contact(message: Message):
+    await message.answer('Спасибо, '
+                         'Мсастер свяжется с вами '
+                         'В ближайщее время')
+    print(
+        message.contact.phone_number,
+        message.contact.first_name,
+        message.contact.last_name,
+        message.contact.user_id,
+        message.contact.vcard,
+        # message.contact.__annotations__,
+        # message.__annotations__
+    )
 
 
 if __name__ == "__main__":
