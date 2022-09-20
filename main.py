@@ -12,10 +12,13 @@ from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
 )
+
+import kb_router.kb_inl_w_time
 import msg
+import cb_custom
 from config import WorkWindow
 
-from kb_router import kb_inl_cmd_start
+from kb_router import kb_inl_cmd_start, kb_inl_w_time, kb_start
 
 ww1 = WorkWindow()
 
@@ -28,21 +31,6 @@ logging.basicConfig(level=logging.INFO)
 
 """ Кастомные колбэки """
 cb_work_time = CallbackData("work_time", "w_time")
-
-"""Клавиатуры"""
-
-kb_w_time = types.InlineKeyboardMarkup()
-kb_w_time.add(
-    types.InlineKeyboardButton(text="Нажми меня", callback_data="send_work_time")
-)
-
-""" Кнопки внизу """
-kb_start = ReplyKeyboardMarkup(
-    resize_keyboard=True,
-)
-
-kb_start.row("Записаться на приём")
-
 
 # Обработка блокировки бота пользователем
 @dp.errors_handler(exception=BotBlocked)
@@ -72,45 +60,62 @@ async def cmd_start(message: types.Message):
 async def callbacks_num(call: types.CallbackQuery):
     # Парсим строку и извлекаем действие, например `num_incr` -> `incr`
     action = call.data.split("_")[1]
-    if action == "services":
-        await call.message.answer(msg.msg_services, parse_mode=ParseMode.HTML)
-        await call.message.delete_reply_markup()
-        await call.message.answer(
-            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
-        )
+    match action:
+        case "services":
+            await call.message.answer(msg.msg_services, parse_mode=ParseMode.HTML)
+            await call.message.delete_reply_markup()
+            await call.message.answer(
+                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+            )
+            # Не забываем отчитаться о получении колбэка
+            await call.answer()
 
-    if action == "masters":
-        await call.message.answer(msg.msg_masters, parse_mode=ParseMode.HTML)
-        await call.message.delete_reply_markup()
-        await call.message.answer(
-            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
-        )
+        case "masters":
+            await call.message.answer(msg.msg_masters, parse_mode=ParseMode.HTML)
+            await call.message.delete_reply_markup()
+            await call.message.answer(
+                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+            )
+            # Не забываем отчитаться о получении колбэка
+            await call.answer()
 
-    if action == "contacts":
-        await call.message.answer(msg.msg_contacts, parse_mode=ParseMode.HTML)
-        await call.message.delete_reply_markup()
-        await call.message.answer(
-            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
-        )
-    if action == "consult":
-        await call.message.answer(msg.msg_consult, parse_mode=ParseMode.HTML)
-        await call.message.delete_reply_markup()
-        await call.message.answer(
-            text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
-        )
-    if action == "sign":
-        await call.message.answer(
-            "Записаться на приём: ",
-            reply_markup=await SimpleCalendar().start_calendar(),
-        )
-        pass
-    if action == "back":
+        case "contacts":
+            await call.message.answer(msg.msg_contacts, parse_mode=ParseMode.HTML)
+            await call.message.delete_reply_markup()
+            await call.message.answer(
+                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+            )
+            # Не забываем отчитаться о получении колбэка
+            await call.answer()
 
-        await call.message.delete_reply_markup()
-        await call.message.answer(text="Назад", reply_markup=kb_inl_cmd_start.kb_inl)
+        case "consult":
+            await call.message.answer(msg.msg_consult, parse_mode=ParseMode.HTML)
+            await call.message.delete_reply_markup()
+            await call.message.answer(
+                text="Назад", reply_markup=kb_inl_cmd_start.kb_inl_back
+            )
+            # Не забываем отчитаться о получении колбэка
+            await call.answer()
 
-    # Не забываем отчитаться о получении колбэка
-    await call.answer()
+        case "sign":
+            await call.message.answer(
+                "Записаться",
+                reply_markup=await SimpleCalendar().start_calendar(),
+            )
+            # Не забываем отчитаться о получении колбэка
+            await call.answer()
+
+        case "back":
+            await call.message.delete_reply_markup()
+            await call.message.answer(
+                text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl
+            )
+            # Не забываем отчитаться о получении колбэка
+            await call.answer()
+
+        case _:
+            # Не забываем отчитаться о получении колбэка
+            await call.answer()
 
 
 """ CMD Команды """
@@ -133,13 +138,15 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
     )
     if selected:
         await callback_query.message.answer(
-            f'Вы выбрали {date.strftime("%d/%m/%Y")}', reply_markup=kb_start
+            f'Вы выбрали {date.strftime("%d/%m/%Y")}',
+            reply_markup=kb_router.kb_start.kb,
         )
 
         # await message.answer("Нажмите на кнопку, чтобы бот отправил число от 1 до 10", reply_markup=keyboard)
 
         await callback_query.message.answer(
-            "Теперь выберите время", reply_markup=kb_w_time
+            "Пожалуйтса выберите время визита:",
+            reply_markup=kb_router.kb_inl_w_time.kb_inl,
         )
 
 
@@ -156,40 +163,40 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
         button_inl_work_clock1 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter],
             # callback_data=ww1.work_hours_graf_1[counter],
-            callback_data=cb_work_time.new(w_time=str(ww1.work_hours_graf_1[counter])),
+            callback_data=cb_custom.cb_work_time.new(w_time=str(ww1.work_hours_graf_1[counter])),
         )
         button_inl_work_clock2 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 1],
             # callback_data=ww1.work_hours_graf_1[counter + 1],
-            callback_data=cb_work_time.new(
+            callback_data=cb_custom.cb_work_time.new(
                 w_time=str(ww1.work_hours_graf_1[counter + 1])
             ),
         )
         button_inl_work_clock3 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 2],
             # callback_data=ww1.work_hours_graf_1[counter + 2],
-            callback_data=cb_work_time.new(
+            callback_data=cb_custom.cb_work_time.new(
                 w_time=str(ww1.work_hours_graf_1[counter + 2])
             ),
         )
         button_inl_work_clock4 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 3],
             # callback_data=ww1.work_hours_graf_1[counter + 3],
-            callback_data=cb_work_time.new(
+            callback_data=cb_custom.cb_work_time.new(
                 w_time=str(ww1.work_hours_graf_1[counter + 3])
             ),
         )
         button_inl_work_clock5 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 4],
             # callback_data=ww1.work_hours_graf_1[counter + 4],
-            callback_data=cb_work_time.new(
+            callback_data=cb_custom.cb_work_time.new(
                 w_time=str(ww1.work_hours_graf_1[counter + 4])
             ),
         )
         button_inl_work_clock6 = types.InlineKeyboardButton(
             text=ww1.work_hours_graf_1[counter + 5],
             # callback_data=ww1.work_hours_graf_1[counter + 5],
-            callback_data=cb_work_time.new(
+            callback_data=cb_custom.cb_work_time.new(
                 w_time=str(ww1.work_hours_graf_1[counter + 5])
             ),
         )
@@ -216,11 +223,10 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     w_time = callback_data["w_time"]
     """ Проверяем коллбэк с кнопки на пустую строку """
     if not w_time == " ":
-        print(w_time)
-
-        # await call.message.edit_text("")
-        await call.message.delete_reply_markup() # Удаляет клавитуру
-        await call.message.answer("Вы записаны на " + str(w_time))
+        # print(w_time)
+        await call.message.delete_reply_markup()  # Удаляет клавитуру
+        await call.message.edit_text("Вы записаны на " + str(w_time))
+        await call.answer()
     await call.answer()
 
 
