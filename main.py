@@ -6,24 +6,21 @@ from aiogram.dispatcher.filters import Text
 from aiogram.types import (
     Message,
     CallbackQuery,
-    ReplyKeyboardMarkup,
     ParseMode,
-    message,
 )
 from aiogram.utils import executor
 from aiogram.utils.callback_data import CallbackData
-import aiogram.utils.markdown as fmt
 from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
 )
-from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
+
+import cb_custom
 import kb_router
 import msg
-import cb_custom
-
 from config import WorkWindow
+from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
 
 ww1 = WorkWindow()
 
@@ -248,9 +245,7 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
 # Обработка высланого контакта
 @dp.message_handler(content_types=[types.ContentType.CONTACT])
 async def msg_handler_to_contact(message: Message):
-    await message.answer('Спасибо, '
-                         'Мсастер свяжется с вами '
-                         'В ближайщее время')
+    await message.answer("Спасибо, " "Мсастер свяжется с вами " "В ближайщее время")
     print(
         message.contact.phone_number,
         message.contact.first_name,

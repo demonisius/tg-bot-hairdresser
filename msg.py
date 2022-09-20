@@ -15,7 +15,6 @@ msg_services = fmt.text(
     sep="\n",
 )
 
-
 # Разметка для Мастеров
 msg_masters = fmt.text(
     fmt.text("Парикмакер Инга"),
