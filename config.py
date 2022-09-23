@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.types import Message
+from db import db_conf
 
 
 #####from lib import lib

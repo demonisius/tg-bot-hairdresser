@@ -9,7 +9,6 @@ from aiogram.types import (
     ParseMode,
 )
 from aiogram.utils import executor
-from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
     simple_cal_callback,
@@ -17,22 +16,21 @@ from aiogram_calendar import (
 )
 
 import cb_custom
+import config
 import kb_router
 import msg
-from config import WorkWindow
 from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
 
-ww1 = WorkWindow()
+ww1 = config.WorkWindow()
 
 # Объект бота
 bot = Bot(token="5685322861:AAEoKnTXVE_20NudE-RKo-CRCwcIVul9uyY")
 # Диспетчер для бота
 dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
-""" Кастомные колбэки """
-cb_work_time = CallbackData("work_time", "w_time")
+userSelectData = []
 
 
 # Обработка блокировки бота пользователем
@@ -153,6 +151,7 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
             "Пожалуйтса выберите время визита:",
             reply_markup=kb_router.kb_inl_w_time.kb_inl,
         )
+        userSelectData.insert(0, date.strftime("%d-%m-%Y"))
 
 
 # Генератов расписания времени
@@ -224,34 +223,74 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
 
 
 # Обработка нажатий кнопок с рабочим окном
-@dp.callback_query_handler(cb_work_time.filter())
+@dp.callback_query_handler(cb_custom.cb_work_time.filter())
 async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     # Обработка нажатий кнопок
     w_time = callback_data["w_time"]
     """ Проверяем коллбэк с кнопки на пустую строку """
     if not w_time == " ":
         # print(w_time)
+
         await call.message.delete_reply_markup()  # Удаляет клавитуру
         await call.message.edit_text("Вы записаны на " + str(w_time))
         await call.message.answer(
             "Отправьте свой контакт для связи ",
             reply_markup=kb_router.kb_share_user_contact.kb,
         )
-
+        userSelectData.insert(1, str(w_time))
         await call.answer()
+
     await call.answer()
 
 
 # Обработка высланого контакта
 @dp.message_handler(content_types=[types.ContentType.CONTACT])
 async def msg_handler_to_contact(message: Message):
-    await message.answer("Спасибо, " "Мсастер свяжется с вами " "В ближайщее время")
+    await message.answer(
+        "Спасибо, " "Мастер свяжется с вами " "В ближайщее время",
+        reply_markup=kb_router.kb_start.kb,
+    )
+    user_select_date = str(userSelectData[0])
+    user_select_time = str(userSelectData[1])
+
+    user_select_date = user_select_date.split("-")
+    user_select_time = user_select_time.split("-")
+
     print(
-        message.contact.phone_number,
+        user_select_date[0],
+        user_select_date[1],
+        user_select_date[2],
+        user_select_time[0],
+        user_select_time[1]
+        # message.contact.user_id,
+        # message.from_user.username,
+        # message.contact.first_name,
+        # message.contact.last_name,
+        # message.contact.phone_number,
+        # message.contact.vcard,
+        # message.contact.__annotations__,
+        # message.__annotations__
+    )
+
+
+"""
+    db = config.db_conf.ClassForDB(
+        message.contact.user_id,
+        message.from_user.username,
         message.contact.first_name,
         message.contact.last_name,
-        message.contact.user_id,
-        message.contact.vcard,
+        message.contact.phone_number,
+    )
+    db.table_creat_users_profile()
+    db.table_insert_to_users_profile()
+"""
+
+
+@dp.message_handler(content_types=[types.ContentType.TEXT])
+async def msg_text_contact(message: Message):
+    print(
+        message.text
+        # message.contact.vcard,
         # message.contact.__annotations__,
         # message.__annotations__
     )
