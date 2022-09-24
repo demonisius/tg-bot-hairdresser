@@ -33,15 +33,15 @@ class ClassForDB:
 
     db_conn = sqlite3.connect("db/database.db")
     db_cur = db_conn.cursor()
-
+    """
     def __init__(
-        self,
-        id_tg_user_id,
-        id_tg_username,
-        id_tg_first_name,
-        id_tg_last_name,
-        id_tg_phone_number,
-        # id_tg_msg,
+            self,
+            id_tg_user_id,
+            id_tg_username,
+            id_tg_first_name,
+            id_tg_last_name,
+            id_tg_phone_number,
+            # id_tg_msg,
     ):
         self.id_tg_user_id = id_tg_user_id
         # self.id_tg_msg = str(id_tg_msg)
@@ -49,7 +49,7 @@ class ClassForDB:
         self.id_tg_first_name = str(id_tg_first_name)
         self.id_tg_last_name = str(id_tg_last_name)
         self.id_tg_phone_number = id_tg_phone_number
-
+    
     def __str__(self):
         return str(
             [
@@ -62,7 +62,7 @@ class ClassForDB:
             ]
         )
 
-    """
+   
     def __del__(self):
         # Закрываем соединение с ДБ
         self.db_cur.close()
@@ -91,14 +91,21 @@ class ClassForDB:
             return print("tg_bot_users_profile ERR")
 
     # Добаление нового профиля пользователя
-    def table_insert_to_users_profile(self):
+    def table_insert_to_users_profile(
+        self,
+        id_tg_user_id,
+        id_tg_phone_number,
+        id_tg_username,
+        id_tg_first_name,
+        id_tg_last_name,
+    ):
         try:
             add_to = (
-                self.id_tg_user_id,
-                self.id_tg_phone_number,
-                self.id_tg_username,
-                self.id_tg_first_name,
-                self.id_tg_last_name,
+                id_tg_user_id,
+                id_tg_phone_number,
+                id_tg_username,
+                id_tg_first_name,
+                id_tg_last_name,
             )
             self.db_cur.execute(
                 "INSERT INTO tg_bot_users_profile VALUES(null, ?, ?, ?, ?, ?);", add_to
@@ -126,19 +133,26 @@ class ClassForDB:
                 """
             )
             self.db_conn.commit()
-            return print("tg_bot_users_profile CREAT")
+            return print("tg_bot_admin_profile CREAT")
         except Exception:
-            return print("tg_bot_users_profile ERR")
+            return print("tg_bot_admin_profile ERR")
 
     # Добаление админиситраторов бота
-    def table_insert_to_admin_profile(self):
+    def table_insert_to_admin_profile(
+        self,
+        id_tg_user_id,
+        id_tg_phone_number,
+        id_tg_username,
+        id_tg_first_name,
+        id_tg_last_name,
+    ):
         try:
             add_to = (
-                self.id_tg_user_id,
-                self.id_tg_phone_number,
-                self.id_tg_username,
-                self.id_tg_first_name,
-                self.id_tg_last_name,
+                id_tg_user_id,
+                id_tg_phone_number,
+                id_tg_username,
+                id_tg_first_name,
+                id_tg_last_name,
             )
             self.db_cur.execute(
                 "INSERT INTO tg_bot_admin_profile VALUES(null, ?, ?, ?, ?, ?);", add_to
@@ -147,6 +161,59 @@ class ClassForDB:
             return print("tg_bot_admin_profile ADD " + str(add_to))
         except Exception:
             print("tg_bot_admin_profile ERR " + str(add_to))
+
+    # Создание таблицы записей на прием
+    def table_creat_tg_bot_users_recording(self):
+        try:
+            self.db_cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS "tg_bot_users_recording" (
+                "id"    INTEGER,
+                "id_tg_user_id"    INTEGER,
+                "id_tg_phone_number"    INTEGER,
+                "id_tg_first_name"    TEXT,
+                "id_tg_last_name"    TEXT,
+                "id_tg_username"    TEXT,
+                "id_tg_user_select_date"    BLOB,
+                "id_tg_user_select_time"    BLOB,
+                PRIMARY    KEY("id"    AUTOINCREMENT)
+                );
+                """
+            )
+            self.db_conn.commit()
+            return print("tg_bot_users_recording CREAT")
+        except Exception:
+            return print("tg_bot_users_recording ERR")
+
+    def table_insert_to_tg_bot_users_recording(
+        self,
+        id_tg_user_id,
+        id_tg_phone_number,
+        id_tg_username,
+        id_tg_first_name,
+        id_tg_last_name,
+        id_tg_user_select_date,
+        id_tg_user_select_time,
+    ):
+
+        try:
+            add_to = (
+                id_tg_user_id,
+                id_tg_phone_number,
+                id_tg_username,
+                id_tg_first_name,
+                id_tg_last_name,
+                id_tg_user_select_date,
+                id_tg_user_select_time,
+            )
+            self.db_cur.execute(
+                "INSERT INTO tg_bot_users_recording VALUES(null, ?, ?, ?, ?, ?, ?, ?);",
+                add_to,
+            )
+            self.db_conn.commit()
+            return print("tg_bot_users_recording ADD " + str(add_to))
+        except Exception:
+            print("tg_bot_users_recording ERR " + str(add_to))
 
     '''  
     # Создание таблицы для логирования сообщений

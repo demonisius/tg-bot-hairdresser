@@ -1,7 +1,30 @@
+"""
+TODO
+Записаться на приём готово
+
+Перевести на русский каленарь
+
+Выборка из ДБ тдля генерации календаря
+
+Пожалуйтса выберите дату визита: готово
+
+Выборка из ДБ тдля генерации календаря
+
+Пожалуйтса выберите время визита: готово
+
+Взять контакт готово
+
+Постать контакт,дату и время Админу
+
+503415978 375296347998 SerggTech
+5728236318 375291720006 Инга
+"""
+
+
 import logging
 
-from aiogram import Bot, Dispatcher
-from aiogram import types
+from aiogram import Bot, Dispatcher, types
+
 from aiogram.dispatcher.filters import Text
 from aiogram.types import (
     Message,
@@ -17,11 +40,9 @@ from aiogram_calendar import (
 
 import cb_custom
 import config
-import kb_router
 import msg
+import kb_router
 from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
-
-ww1 = config.WorkWindow()
 
 # Объект бота
 bot = Bot(token="5685322861:AAEoKnTXVE_20NudE-RKo-CRCwcIVul9uyY")
@@ -31,7 +52,8 @@ dp = Dispatcher(bot)
 logging.basicConfig(level=logging.INFO)
 
 userSelectData = []
-
+ww1 = config.WorkWindow()
+db = config.db_conf.ClassForDB()
 
 # Обработка блокировки бота пользователем
 @dp.errors_handler(exception=BotBlocked)
@@ -56,6 +78,17 @@ async def cmd_start(message: types.Message):
             photo=photo, reply_markup=kb_router.kb_inl_cmd_start.kb_inl
         )
         # await message.answer("Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar())
+
+
+@dp.message_handler(commands="db_table_creat")
+async def cmd_admin_creat(message: types.Message):
+    await message.answer("Таблицы DB созданы")
+    db.table_creat_users_profile()
+    db.table_creat_admin_profile()
+    db.table_creat_tg_bot_users_recording()
+
+
+""" CMD Команды """
 
 
 # Обработка кнопок статового меню
@@ -120,8 +153,6 @@ async def callbacks_num(call: types.CallbackQuery):
             # Не забываем отчитаться о получении колбэка
             await call.answer()
 
-
-""" CMD Команды """
 
 """ Start menu """
 
@@ -272,18 +303,24 @@ async def msg_handler_to_contact(message: Message):
         # message.__annotations__
     )
 
-
-"""
-    db = config.db_conf.ClassForDB(
+    db.table_insert_to_users_profile(
         message.contact.user_id,
+        message.contact.phone_number,
         message.from_user.username,
         message.contact.first_name,
         message.contact.last_name,
-        message.contact.phone_number,
     )
-    db.table_creat_users_profile()
-    db.table_insert_to_users_profile()
-"""
+    db.table_insert_to_tg_bot_users_recording(
+        message.contact.user_id,
+        message.contact.phone_number,
+        message.from_user.username,
+        message.contact.first_name,
+        message.contact.last_name,
+        str(
+            user_select_date[0] + ":" + user_select_date[1] + ":" + user_select_date[2]
+        ),
+        str(user_select_time[0] + ":" + user_select_time[1]),
+    )
 
 
 @dp.message_handler(content_types=[types.ContentType.TEXT])
