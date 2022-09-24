@@ -70,7 +70,7 @@ class ClassForDB:
     """
 
     # Создание таблицы для профилей пользователей
-    def table_creat_users_profile(self):
+    def creat_users_profile(self):
         try:
             self.db_cur.execute(
                 """
@@ -86,12 +86,12 @@ class ClassForDB:
                 """
             )
             self.db_conn.commit()
-            return print("tg_bot_users_profile CREAT")
+            # return print("tg_bot_users_profile CREAT")
         except Exception:
             return print("tg_bot_users_profile ERR")
 
     # Добаление нового профиля пользователя
-    def table_insert_to_users_profile(
+    def insert_to_users_profile(
         self,
         id_tg_user_id,
         id_tg_phone_number,
@@ -111,13 +111,13 @@ class ClassForDB:
                 "INSERT INTO tg_bot_users_profile VALUES(null, ?, ?, ?, ?, ?);", add_to
             )
             self.db_conn.commit()
-            return print("tg_bot_users_profile ADD " + str(add_to))
+            # return print("tg_bot_users_profile ADD " + str(add_to))
         except Exception:
             return print("tg_bot_users_profile ERR " + str(add_to))
 
     # Создание таблицы админиситраторов бота
 
-    def table_creat_admin_profile(self):
+    def creat_admin_profile(self):
         try:
             self.db_cur.execute(
                 """
@@ -133,12 +133,12 @@ class ClassForDB:
                 """
             )
             self.db_conn.commit()
-            return print("tg_bot_admin_profile CREAT")
+            # return print("tg_bot_admin_profile CREAT")
         except Exception:
             return print("tg_bot_admin_profile ERR")
 
     # Добаление админиситраторов бота
-    def table_insert_to_admin_profile(
+    def insert_to_admin_profile(
         self,
         id_tg_user_id,
         id_tg_phone_number,
@@ -158,12 +158,12 @@ class ClassForDB:
                 "INSERT INTO tg_bot_admin_profile VALUES(null, ?, ?, ?, ?, ?);", add_to
             )
             self.db_conn.commit()
-            return print("tg_bot_admin_profile ADD " + str(add_to))
+            # return print("tg_bot_admin_profile ADD " + str(add_to))
         except Exception:
             print("tg_bot_admin_profile ERR " + str(add_to))
 
     # Создание таблицы записей на прием
-    def table_creat_tg_bot_users_recording(self):
+    def creat_tg_bot_users_recording(self):
         try:
             self.db_cur.execute(
                 """
@@ -176,16 +176,18 @@ class ClassForDB:
                 "id_tg_username"    TEXT,
                 "id_tg_user_select_date"    BLOB,
                 "id_tg_user_select_time"    BLOB,
+                "users_recording_status"  TEXT,
                 PRIMARY    KEY("id"    AUTOINCREMENT)
                 );
                 """
             )
             self.db_conn.commit()
-            return print("tg_bot_users_recording CREAT")
+            # return print("tg_bot_users_recording CREAT")
         except Exception:
             return print("tg_bot_users_recording ERR")
 
-    def table_insert_to_tg_bot_users_recording(
+    # Добаление записей на прием
+    def insert_to_tg_bot_users_recording(
         self,
         id_tg_user_id,
         id_tg_phone_number,
@@ -194,6 +196,7 @@ class ClassForDB:
         id_tg_last_name,
         id_tg_user_select_date,
         id_tg_user_select_time,
+        users_recording_status,
     ):
 
         try:
@@ -205,15 +208,32 @@ class ClassForDB:
                 id_tg_last_name,
                 id_tg_user_select_date,
                 id_tg_user_select_time,
+                users_recording_status,
             )
             self.db_cur.execute(
-                "INSERT INTO tg_bot_users_recording VALUES(null, ?, ?, ?, ?, ?, ?, ?);",
+                "INSERT INTO tg_bot_users_recording VALUES(null, ?, ?, ?, ?, ?, ?, ?, ?);",
                 add_to,
             )
             self.db_conn.commit()
-            return print("tg_bot_users_recording ADD " + str(add_to))
+            # return print("tg_bot_users_recording ADD " + str(add_to))
         except Exception:
             print("tg_bot_users_recording ERR " + str(add_to))
+
+    # Выборка записей на прием
+    def fetch_from_tg_bot_users_recording(self):
+
+        try:
+            res = self.db_cur.execute(
+                "SELECT "
+                "id_tg_user_select_date, id_tg_user_select_time, users_recording_status"
+                " FROM tg_bot_users_recording "
+                "ORDER BY id_tg_user_select_date"
+            )
+            # print(res.fetchall())
+            # print("tg_bot_users_recording FETCH ")
+            return res.fetchall()
+        except Exception:
+            print("tg_bot_users_recording ERR ")
 
     '''  
     # Создание таблицы для логирования сообщений

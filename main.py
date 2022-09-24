@@ -20,7 +20,6 @@ TODO
 5728236318 375291720006 Инга
 """
 
-
 import logging
 
 from aiogram import Bot, Dispatcher, types
@@ -31,6 +30,7 @@ from aiogram.types import (
     CallbackQuery,
     ParseMode,
 )
+import aiogram.utils.markdown as fmt
 from aiogram.utils import executor
 from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
@@ -54,6 +54,7 @@ logging.basicConfig(level=logging.INFO)
 userSelectData = []
 ww1 = config.WorkWindow()
 db = config.db_conf.ClassForDB()
+
 
 # Обработка блокировки бота пользователем
 @dp.errors_handler(exception=BotBlocked)
@@ -81,11 +82,51 @@ async def cmd_start(message: types.Message):
 
 
 @dp.message_handler(commands="db_table_creat")
-async def cmd_admin_creat(message: types.Message):
+async def db_table_creat(message: types.Message):
     await message.answer("Таблицы DB созданы")
-    db.table_creat_users_profile()
-    db.table_creat_admin_profile()
-    db.table_creat_tg_bot_users_recording()
+    db.creat_users_profile()
+    db.creat_admin_profile()
+    db.creat_tg_bot_users_recording()
+
+
+@dp.message_handler(commands="users_recording")
+async def users_recording(message: types.Message):
+    await message.answer("Выборка записей")
+    fetch = db.fetch_from_tg_bot_users_recording()
+    msg_fetch = fmt.text(
+        fetch,
+        sep="\n",
+    )
+    # fetch
+    await message.answer(msg_fetch, parse_mode=ParseMode.HTML)
+
+    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
+
+    for val in fetch:
+        if val[2] == "close":
+            print("close")
+            text = str(val[0] + " " + val[1] + " close")
+        else:
+            print("open")
+            text = str(val[0] + " " + val[1] + " open")
+
+        button_inl_status_row1 = types.InlineKeyboardButton(
+            text=text,
+            callback_data=str(val[0] + " " + val[1] + " " + val[2]),
+        )
+        button_inl_status_row2 = types.InlineKeyboardButton(
+            text=text,
+            callback_data=str(val[0] + " " + val[1] + " " + val[2]),
+        )
+        button_inl_status_row3 = types.InlineKeyboardButton(
+            text=text,
+            callback_data=str(val[0] + " " + val[1] + " " + val[2]),
+        )
+        kb_inl_status.add(
+            button_inl_status_row1, button_inl_status_row2# , button_inl_status_row3
+        )
+        print(val[0], val[1], val[2])
+    await message.answer("msg_fetch", reply_markup=kb_inl_status)
 
 
 """ CMD Команды """
@@ -303,14 +344,14 @@ async def msg_handler_to_contact(message: Message):
         # message.__annotations__
     )
 
-    db.table_insert_to_users_profile(
+    db.insert_to_users_profile(
         message.contact.user_id,
         message.contact.phone_number,
         message.from_user.username,
         message.contact.first_name,
         message.contact.last_name,
     )
-    db.table_insert_to_tg_bot_users_recording(
+    db.insert_to_tg_bot_users_recording(
         message.contact.user_id,
         message.contact.phone_number,
         message.from_user.username,
@@ -320,6 +361,7 @@ async def msg_handler_to_contact(message: Message):
             user_select_date[0] + ":" + user_select_date[1] + ":" + user_select_date[2]
         ),
         str(user_select_time[0] + ":" + user_select_time[1]),
+        "open",
     )
 
 
