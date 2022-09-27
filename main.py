@@ -89,36 +89,61 @@ async def db_table_creat(message: types.Message):
     db.creat_tg_bot_users_recording()
 
 
-@dp.message_handler(commands="users_recording")
-async def users_recording(message: types.Message):
-    await message.answer("Выборка записей")
-    fetch = db.fetch_from_tg_bot_users_recording()
-    msg_fetch = fmt.text(
-        fetch,
-        sep="\n",
-    )
-    # fetch
-    await message.answer(msg_fetch, parse_mode=ParseMode.HTML)
+@dp.message_handler(commands="users_open_recording")
+async def users_open_recording(message: types.Message):
+    fetch = db.fetch_from_tg_bot_users_open_recording()
 
-    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=3)
+    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     for val in fetch:
-        if val[2] == "close":
-            print("close")
-            text = str(val[0] + " " + val[1] + " close")
-        else:
-            print("open")
-            text = str(val[0] + " " + val[1] + " open")
 
         button_inl_status_row1 = types.InlineKeyboardButton(
-            text=text,
-            callback_data=str(val[0] + " " + val[1] + " " + val[2]),
+            text=str("Запись " + val[0] + " в " + val[1]),
+            callback_data=str(val[0] + " " + val[1]),
         )
         kb_inl_status.insert(
             button_inl_status_row1,  # button_inl_status_row2   , button_inl_status_row3
         )
-        print(val[0], val[1], val[2])
-    await message.answer("msg_fetch", reply_markup=kb_inl_status)
+        # print(val[0], val[1])
+    await message.answer("Выборка открытых записей", reply_markup=kb_inl_status)
+
+
+@dp.message_handler(commands="users_close_recording")
+async def users_close_recording(message: types.Message):
+    fetch = db.fetch_from_tg_bot_users_close_recording()
+
+    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
+
+    for val in fetch:
+
+        button_inl_status_row1 = types.InlineKeyboardButton(
+            text=str("Запись " + val[0] + " в " + val[1]),
+            callback_data=str(val[0] + " " + val[1]),
+        )
+        kb_inl_status.insert(
+            button_inl_status_row1,  # button_inl_status_row2   , button_inl_status_row3
+        )
+        # print(val[0], val[1])
+    await message.answer("Выборка закрытых записей", reply_markup=kb_inl_status)
+
+
+@dp.message_handler(commands="users_all_recording")
+async def users_recording(message: types.Message):
+    fetch = db.fetch_from_tg_bot_users_all_recording()
+
+    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
+
+    for val in fetch:
+
+        button_inl_status_row1 = types.InlineKeyboardButton(
+            text=str("Запись " + val[0] + " в " + val[1]),
+            callback_data=str(val[0] + " " + val[1]),
+        )
+        kb_inl_status.insert(
+            button_inl_status_row1,  # button_inl_status_row2   , button_inl_status_row3
+        )
+        # print(val[0], val[1])
+    await message.answer("Выборка всех записей", reply_markup=kb_inl_status)
 
 
 """ CMD Команды """
@@ -205,7 +230,7 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
     )
     if selected:
         await callback_query.message.answer(
-            f'Вы выбрали {date.strftime("%d/%m/%Y")}',
+            f'Вы выбрали {date.strftime("%d.%m.%Y")}',
             reply_markup=kb_router.kb_start.kb,
         )
 
@@ -303,9 +328,9 @@ async def msg_handler_to_contact(message: Message):
         message.contact.first_name,
         message.contact.last_name,
         str(
-            user_select_date[0] + ":" + user_select_date[1] + ":" + user_select_date[2]
+            user_select_date[0] + "." + user_select_date[1] + "." + user_select_date[2]
         ),
-        str(user_select_time[0] + ":" + user_select_time[1]),
+        str(user_select_time[0] + "-" + user_select_time[1]),
         "open",
     )
 

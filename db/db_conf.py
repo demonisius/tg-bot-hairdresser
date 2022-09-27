@@ -219,7 +219,7 @@ class ClassForDB:
             print("tg_bot_users_recording ERR " + str(add_to))
 
     # Выборка записей на прием
-    def fetch_from_tg_bot_users_recording(self):
+    def fetch_from_tg_bot_users_all_recording(self):
 
         try:
             res = self.db_cur.execute(
@@ -227,6 +227,36 @@ class ClassForDB:
                 "id_tg_user_select_date, id_tg_user_select_time, users_recording_status"
                 " FROM tg_bot_users_recording "
                 "ORDER BY id_tg_user_select_date"
+            )
+            # print(res.fetchall())
+            # print("tg_bot_users_recording FETCH ")
+            return res.fetchall()
+        except Exception:
+            print("tg_bot_users_recording ERR ")
+
+    def fetch_from_tg_bot_users_open_recording(self):
+
+        try:
+            res = self.db_cur.execute(
+                "SELECT id_tg_user_select_date, id_tg_user_select_time "
+                "FROM tg_bot_users_recording "
+                "WHERE users_recording_status='open'"
+                "ORDER BY id_tg_user_select_date, id_tg_user_select_time "
+            )
+            # print(res.fetchall())
+            # print("tg_bot_users_recording FETCH ")
+            return res.fetchall()
+        except Exception:
+            print("tg_bot_users_recording ERR ")
+
+    def fetch_from_tg_bot_users_close_recording(self):
+
+        try:
+            res = self.db_cur.execute(
+                "SELECT id_tg_user_select_date, id_tg_user_select_time "
+                "FROM tg_bot_users_recording "
+                "WHERE users_recording_status='close'"
+                "ORDER BY id_tg_user_select_date, id_tg_user_select_time "
             )
             # print(res.fetchall())
             # print("tg_bot_users_recording FETCH ")
