@@ -1,18 +1,17 @@
 import sqlite3
 
 """
+import random
+
+
 simIdTg = 503415978  # random.randint(1000, 9999)  # 503415978
 simPhone = +375296347998  # random.randint(10000, 99999)  # +375296347998
 simMsg = "Msg: simMsg " + str(random.randint(10000, 99999))
-simName = (
-    "Name: simName " + "SerggTech"
-)  # str(random.randint(10000, 99999))  # "SerggTech"
 simNick = "Nick: simNick " + str(random.randint(10000, 99999))
 simFirst_name = "Nick: simFirst_name " + "Sergg"
 simLast_name = "Nick: simLast_name " + "Tech"
 simUsername = "Name: simUsername " + "SerggTech"
-db_conn = sqlite3.connect("db/database.db")
-db_cur = db_conn.cursor()
+simUsers_recording_status = ['open','close']
 """
 
 
@@ -274,15 +273,7 @@ class ClassForDB:
 
 
 '''
-db_class = ClassForDB(
-    id_tg_user_id=simIdTg,
-    # id_tg_msg=simMsg,
-    id_tg_phone_number=simPhone,
-    id_tg_username=simUsername,
-    id_tg_first_name=simFirst_name,
-    id_tg_last_name=simLast_name,
-)
-
+db_class = ClassForDB()
 # print(db_class)
 # print(db_class.select_id_tg_ms_for_ig_msg("8628"))
 

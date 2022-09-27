@@ -100,7 +100,7 @@ async def users_recording(message: types.Message):
     # fetch
     await message.answer(msg_fetch, parse_mode=ParseMode.HTML)
 
-    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
+    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=3)
 
     for val in fetch:
         if val[2] == "close":
@@ -114,16 +114,8 @@ async def users_recording(message: types.Message):
             text=text,
             callback_data=str(val[0] + " " + val[1] + " " + val[2]),
         )
-        button_inl_status_row2 = types.InlineKeyboardButton(
-            text=text,
-            callback_data=str(val[0] + " " + val[1] + " " + val[2]),
-        )
-        button_inl_status_row3 = types.InlineKeyboardButton(
-            text=text,
-            callback_data=str(val[0] + " " + val[1] + " " + val[2]),
-        )
-        kb_inl_status.add(
-            button_inl_status_row1, button_inl_status_row2# , button_inl_status_row3
+        kb_inl_status.insert(
+            button_inl_status_row1,  # button_inl_status_row2   , button_inl_status_row3
         )
         print(val[0], val[1], val[2])
     await message.answer("msg_fetch", reply_markup=kb_inl_status)
@@ -234,61 +226,14 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
     # await call.message.answer("Пожалуйтса выберите время визита: ")
 
     kb_inl_work_clock = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
-    counter = 0
-    for value in ww1.work_hours_graf_1[0:-1]:
+    for value in ww1.work_hours_graf_1:
         button_inl_work_clock1 = types.InlineKeyboardButton(
-            text=ww1.work_hours_graf_1[counter],
-            # callback_data=ww1.work_hours_graf_1[counter],
-            callback_data=cb_custom.cb_work_time.new(
-                w_time=str(ww1.work_hours_graf_1[counter])
-            ),
+            text=value,
+            callback_data=cb_custom.cb_work_time.new(w_time=str(value)),
         )
-        button_inl_work_clock2 = types.InlineKeyboardButton(
-            text=ww1.work_hours_graf_1[counter + 1],
-            # callback_data=ww1.work_hours_graf_1[counter + 1],
-            callback_data=cb_custom.cb_work_time.new(
-                w_time=str(ww1.work_hours_graf_1[counter + 1])
-            ),
-        )
-        button_inl_work_clock3 = types.InlineKeyboardButton(
-            text=ww1.work_hours_graf_1[counter + 2],
-            # callback_data=ww1.work_hours_graf_1[counter + 2],
-            callback_data=cb_custom.cb_work_time.new(
-                w_time=str(ww1.work_hours_graf_1[counter + 2])
-            ),
-        )
-        button_inl_work_clock4 = types.InlineKeyboardButton(
-            text=ww1.work_hours_graf_1[counter + 3],
-            # callback_data=ww1.work_hours_graf_1[counter + 3],
-            callback_data=cb_custom.cb_work_time.new(
-                w_time=str(ww1.work_hours_graf_1[counter + 3])
-            ),
-        )
-        button_inl_work_clock5 = types.InlineKeyboardButton(
-            text=ww1.work_hours_graf_1[counter + 4],
-            # callback_data=ww1.work_hours_graf_1[counter + 4],
-            callback_data=cb_custom.cb_work_time.new(
-                w_time=str(ww1.work_hours_graf_1[counter + 4])
-            ),
-        )
-        button_inl_work_clock6 = types.InlineKeyboardButton(
-            text=ww1.work_hours_graf_1[counter + 5],
-            # callback_data=ww1.work_hours_graf_1[counter + 5],
-            callback_data=cb_custom.cb_work_time.new(
-                w_time=str(ww1.work_hours_graf_1[counter + 5])
-            ),
-        )
-        kb_inl_work_clock.add(
-            button_inl_work_clock1,
-            button_inl_work_clock2,
-            button_inl_work_clock3,
-            button_inl_work_clock4,
-            button_inl_work_clock5,
-            button_inl_work_clock6,
-        )
-        counter += 6
-        if counter == 24:
-            break
+
+        kb_inl_work_clock.insert(button_inl_work_clock1)
+
     await call.message.delete_reply_markup()  # Удаляем кнопки
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
     await call.answer()
