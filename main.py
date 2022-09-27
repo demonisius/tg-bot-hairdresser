@@ -23,14 +23,12 @@ TODO
 import logging
 
 from aiogram import Bot, Dispatcher, types
-
 from aiogram.dispatcher.filters import Text
 from aiogram.types import (
     Message,
     CallbackQuery,
     ParseMode,
 )
-import aiogram.utils.markdown as fmt
 from aiogram.utils import executor
 from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
@@ -40,8 +38,8 @@ from aiogram_calendar import (
 
 import cb_custom
 import config
-import msg
 import kb_router
+import msg
 from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
 
 # Объект бота
@@ -96,7 +94,6 @@ async def users_open_recording(message: types.Message):
     kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     for val in fetch:
-
         button_inl_status_row1 = types.InlineKeyboardButton(
             text=str("Запись " + val[0] + " в " + val[1]),
             callback_data=str(val[0] + " " + val[1]),
@@ -115,7 +112,6 @@ async def users_close_recording(message: types.Message):
     kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     for val in fetch:
-
         button_inl_status_row1 = types.InlineKeyboardButton(
             text=str("Запись " + val[0] + " в " + val[1]),
             callback_data=str(val[0] + " " + val[1]),
@@ -134,7 +130,6 @@ async def users_recording(message: types.Message):
     kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     for val in fetch:
-
         button_inl_status_row1 = types.InlineKeyboardButton(
             text=str("Запись " + val[0] + " в " + val[1]),
             callback_data=str(val[0] + " " + val[1]),
@@ -248,16 +243,43 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
 
 @dp.callback_query_handler(text="send_work_time")
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
-    # await call.message.answer("Пожалуйтса выберите время визита: ")
+    # Приводим к формату данные
+    select_date = userSelectData[0]
+    select_date = select_date.split("-")
+    select_date = select_date[0] + "." + select_date[1] + "." + select_date[2]
+    # Если нет записи на эту дату то пишем на кнопке занято
+    # print(db.fetch_from_id_tg_user_select_time(select_date))
 
     kb_inl_work_clock = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
-    for value in ww1.work_hours_graf_1:
-        button_inl_work_clock1 = types.InlineKeyboardButton(
-            text=value,
-            callback_data=cb_custom.cb_work_time.new(w_time=str(value)),
-        )
 
-        kb_inl_work_clock.insert(button_inl_work_clock1)
+    """ 
+    Проверка на пустой список
+    Если список пуст это значит что нет записей на этот день
+    Можно выслать обычную клавиатуру
+    """
+    if len(db.fetch_from_id_tg_user_select_time(select_date)) == 0:
+        # Генерация кнопок
+        print("Нет записей на этот день")
+        for value in ww1.work_hours_graf_1:
+            button_inl_work_clock1 = types.InlineKeyboardButton(
+                text=value,
+                callback_data=cb_custom.cb_work_time.new(w_time=str(value)),
+            )
+
+            kb_inl_work_clock.insert(button_inl_work_clock1)
+    else:
+        # Генерация кнопок
+        print("Есть записи на этот день")
+        for value in ww1.work_hours_graf_1:
+            button_inl_work_clock1 = types.InlineKeyboardButton(
+                text=value,
+                callback_data=cb_custom.cb_work_time.new(w_time=str(value)),
+            )
+
+            kb_inl_work_clock.insert(button_inl_work_clock1)
+
+    for date_value in db.fetch_from_id_tg_user_select_time(select_date):
+        print(date_value)
 
     await call.message.delete_reply_markup()  # Удаляем кнопки
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
@@ -303,15 +325,7 @@ async def msg_handler_to_contact(message: Message):
         user_select_date[1],
         user_select_date[2],
         user_select_time[0],
-        user_select_time[1]
-        # message.contact.user_id,
-        # message.from_user.username,
-        # message.contact.first_name,
-        # message.contact.last_name,
-        # message.contact.phone_number,
-        # message.contact.vcard,
-        # message.contact.__annotations__,
-        # message.__annotations__
+        user_select_time[1],
     )
 
     db.insert_to_users_profile(

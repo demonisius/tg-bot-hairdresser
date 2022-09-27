@@ -183,7 +183,7 @@ class ClassForDB:
             self.db_conn.commit()
             # return print("tg_bot_users_recording CREAT")
         except Exception:
-            return print("tg_bot_users_recording ERR")
+            return print("creat_tg_bot_users_recording ERR")
 
     # Добаление записей на прием
     def insert_to_tg_bot_users_recording(
@@ -216,7 +216,7 @@ class ClassForDB:
             self.db_conn.commit()
             # return print("tg_bot_users_recording ADD " + str(add_to))
         except Exception:
-            print("tg_bot_users_recording ERR " + str(add_to))
+            print("insert_to_tg_bot_users_recording ERR " + str(add_to))
 
     # Выборка записей на прием
     def fetch_from_tg_bot_users_all_recording(self):
@@ -232,7 +232,7 @@ class ClassForDB:
             # print("tg_bot_users_recording FETCH ")
             return res.fetchall()
         except Exception:
-            print("tg_bot_users_recording ERR ")
+            print("fetch_from_tg_bot_users_all_recording ERR ")
 
     def fetch_from_tg_bot_users_open_recording(self):
 
@@ -247,7 +247,7 @@ class ClassForDB:
             # print("tg_bot_users_recording FETCH ")
             return res.fetchall()
         except Exception:
-            print("tg_bot_users_recording ERR ")
+            print("fetch_from_tg_bot_users_open_recording ERR ")
 
     def fetch_from_tg_bot_users_close_recording(self):
 
@@ -262,7 +262,24 @@ class ClassForDB:
             # print("tg_bot_users_recording FETCH ")
             return res.fetchall()
         except Exception:
-            print("tg_bot_users_recording ERR ")
+            print("fetch_from_tg_bot_users_close_recording ERR ")
+
+    def fetch_from_id_tg_user_select_time(self, select_date):
+        # print('def '+select_date)
+        sql = (
+            "SELECT id_tg_user_select_time "
+            "FROM tg_bot_users_recording "
+            "WHERE id_tg_user_select_date = '" + select_date + "' "
+            "ORDER BY id_tg_user_select_date, id_tg_user_select_time "
+        )
+
+        try:
+            res = self.db_cur.execute(sql)
+            time_list = res.fetchall()
+            return time_list
+        except Exception:
+            print(Exception.message, Exception.args)
+            print("fetch_from_id_tg_user_select_time ERR ")
 
     '''  
     # Создание таблицы для логирования сообщений
