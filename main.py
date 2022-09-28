@@ -268,6 +268,13 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
 
             kb_inl_work_clock.insert(button_inl_work_clock1)
     else:
+
+        """
+        Если есть записи на выбраный день
+         то сравниваем выборку из work_time с выборкой из БД
+         если есть совпадениея меняем текст кнопки на занято
+        """
+
         # Генерация кнопок
         print("Есть записи на этот день")
         for value in ww1.work_hours_graf_1:
