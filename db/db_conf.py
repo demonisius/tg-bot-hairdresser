@@ -161,6 +161,21 @@ class ClassForDB:
         except Exception:
             print("tg_bot_admin_profile ERR " + str(add_to))
 
+    # Выборка ИД ТГ Админов
+    def fetch_from_admin_profile(self):
+        sql = "SELECT id_tg_user_id " "FROM tg_bot_admin_profile "
+
+        try:
+            res = self.db_cur.execute(sql)
+
+            format_fetch = []
+            for val in res.fetchall():
+                format_fetch.append(val[0])
+
+            return format_fetch
+        except Exception:
+            print("fetch_from_admin_profile ERR ")
+
     # Создание таблицы записей на прием
     def creat_tg_bot_users_recording(self):
         try:
@@ -218,7 +233,7 @@ class ClassForDB:
         except Exception:
             print("insert_to_tg_bot_users_recording ERR " + str(add_to))
 
-    # Выборка записей на прием
+    # Выборка всех записей на прием
     def fetch_from_tg_bot_users_all_recording(self):
 
         try:
@@ -234,6 +249,7 @@ class ClassForDB:
         except Exception:
             print("fetch_from_tg_bot_users_all_recording ERR ")
 
+    # Выборка открытых записей на прием
     def fetch_from_tg_bot_users_open_recording(self):
 
         try:
@@ -249,6 +265,7 @@ class ClassForDB:
         except Exception:
             print("fetch_from_tg_bot_users_open_recording ERR ")
 
+    # Выборка закрытых записей на прием
     def fetch_from_tg_bot_users_close_recording(self):
 
         try:
@@ -259,11 +276,11 @@ class ClassForDB:
                 "ORDER BY id_tg_user_select_date, id_tg_user_select_time "
             )
             # print(res.fetchall())
-            # print("tg_bot_users_recording FETCH ")
             return res.fetchall()
         except Exception:
             print("fetch_from_tg_bot_users_close_recording ERR ")
 
+    # Выборка для определения занятых часов на определённую дату приема
     def fetch_from_id_tg_user_select_time(self, select_date):
         # print('def '+select_date)
         sql = (
@@ -275,8 +292,14 @@ class ClassForDB:
 
         try:
             res = self.db_cur.execute(sql)
-            time_list = res.fetchall()
-            return time_list
+
+            # Приводим к формату данные# Приводим к формату данные
+            format_fetch = []
+            for val in res.fetchall():
+                format_fetch.append(val[0])
+
+            return format_fetch
+
         except Exception:
             print(Exception.message, Exception.args)
             print("fetch_from_id_tg_user_select_time ERR ")

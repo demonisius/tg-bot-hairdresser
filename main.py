@@ -4,17 +4,19 @@ TODO
 
 Перевести на русский каленарь
 
-Выборка из ДБ тдля генерации календаря
+Выборка из ДБ для генерации календаря
 
 Пожалуйтса выберите дату визита: готово
 
-Выборка из ДБ тдля генерации календаря
+Выборка из ДБ для генерации время визита: готово
 
 Пожалуйтса выберите время визита: готово
 
 Взять контакт готово
 
-Постать контакт,дату и время Админу
+Послать контакт, дату и время админам бота: готово
+
+Сделать админку и фильр команд для админам бота
 
 503415978 375296347998 SerggTech
 5728236318 375291720006 Инга
@@ -244,22 +246,30 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
 @dp.callback_query_handler(text="send_work_time")
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
     # Приводим к формату данные
-    select_date = userSelectData[0]
-    select_date = select_date.split("-")
-    select_date = select_date[0] + "." + select_date[1] + "." + select_date[2]
+    format_select_date = userSelectData[0]
+    format_select_date = format_select_date.split("-")
+    format_select_date = (
+        format_select_date[0]
+        + "."
+        + format_select_date[1]
+        + "."
+        + format_select_date[2]
+    )
     # Если нет записи на эту дату то пишем на кнопке занято
     # print(db.fetch_from_id_tg_user_select_time(select_date))
 
     kb_inl_work_clock = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
 
-    """ 
-    Проверка на пустой список
-    Если список пуст это значит что нет записей на этот день
-    Можно выслать обычную клавиатуру
-    """
-    if len(db.fetch_from_id_tg_user_select_time(select_date)) == 0:
+    if len(db.fetch_from_id_tg_user_select_time(format_select_date)) == 0:
         # Генерация кнопок
-        print("Нет записей на этот день")
+
+        """
+        Проверка на пустой список.
+        Если список пуст это значит что нет записей на этот день
+        Можно выслать обычную клавиатуру
+        """
+
+        print("Нет записей на этот день " + str(userSelectData[0]))
         for value in ww1.work_hours_graf_1:
             button_inl_work_clock1 = types.InlineKeyboardButton(
                 text=value,
@@ -268,25 +278,34 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
 
             kb_inl_work_clock.insert(button_inl_work_clock1)
     else:
-
-        """
-        Если есть записи на выбраный день
-         то сравниваем выборку из work_time с выборкой из БД
-         если есть совпадениея меняем текст кнопки на занято
-        """
-
         # Генерация кнопок
-        print("Есть записи на этот день")
+
+        """
+        Если есть записи на выбраный день,
+        то сравниваем выборку из work_time с выборкой из БД.
+        Если есть совпадениея меняем текст кнопки на занято
+        """
+
+        print("Есть записи на этот день " + str(userSelectData[0]))
+
         for value in ww1.work_hours_graf_1:
-            button_inl_work_clock1 = types.InlineKeyboardButton(
-                text=value,
-                callback_data=cb_custom.cb_work_time.new(w_time=str(value)),
-            )
 
-            kb_inl_work_clock.insert(button_inl_work_clock1)
+            if value in db.fetch_from_id_tg_user_select_time(format_select_date):
 
-    for date_value in db.fetch_from_id_tg_user_select_time(select_date):
-        print(date_value)
+                # print("Занято на " + str(value))
+                button_inl_work_clock1 = types.InlineKeyboardButton(
+                    text="Занято",
+                    callback_data=cb_custom.cb_work_time.new(w_time="Занято"),
+                )
+                kb_inl_work_clock.insert(button_inl_work_clock1)
+
+            else:
+
+                button_inl_work_clock1 = types.InlineKeyboardButton(
+                    text=value,
+                    callback_data=cb_custom.cb_work_time.new(w_time=str(value)),
+                )
+                kb_inl_work_clock.insert(button_inl_work_clock1)
 
     await call.message.delete_reply_markup()  # Удаляем кнопки
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
@@ -317,16 +336,30 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
 # Обработка высланого контакта
 @dp.message_handler(content_types=[types.ContentType.CONTACT])
 async def msg_handler_to_contact(message: Message):
+    user_select_date = str(userSelectData[0])
+    user_select_time = str(userSelectData[1])
+
     await message.answer(
         "Спасибо, " "Мастер свяжется с вами " "В ближайщее время",
         reply_markup=kb_router.kb_start.kb,
     )
-    user_select_date = str(userSelectData[0])
-    user_select_time = str(userSelectData[1])
+
+    # Отправка сообщений всем админам бота
+    for val in db.fetch_from_admin_profile():
+        await bot.send_message(
+            chat_id=val,
+            text="У вас запись "
+            + user_select_date
+            + " на "
+            + user_select_time
+            + " Телефон клиента: "
+            + message.contact.phone_number,
+        )
 
     user_select_date = user_select_date.split("-")
     user_select_time = user_select_time.split("-")
 
+    """
     print(
         user_select_date[0],
         user_select_date[1],
@@ -334,6 +367,7 @@ async def msg_handler_to_contact(message: Message):
         user_select_time[0],
         user_select_time[1],
     )
+    """
 
     db.insert_to_users_profile(
         message.contact.user_id,
