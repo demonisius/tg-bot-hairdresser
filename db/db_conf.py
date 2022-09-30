@@ -1,9 +1,7 @@
 import sqlite3
-
-"""
 import random
 
-
+"""
 simIdTg = 503415978  # random.randint(1000, 9999)  # 503415978
 simPhone = +375296347998  # random.randint(10000, 99999)  # +375296347998
 simMsg = "Msg: simMsg " + str(random.randint(10000, 99999))
@@ -17,6 +15,7 @@ simUsers_recording_status = ['open','close']
 
 class ClassForDB:
     """
+    TODO Вынести запросы к дб в отдельный файл
     Класс для работы с ДБ
     Профили пользователей
     Логирование сообщений

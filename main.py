@@ -1,22 +1,7 @@
 """
-TODO
-Записаться на приём готово
-
-Перевести на русский каленарь
-
-Выборка из ДБ для генерации календаря
-
-Пожалуйтса выберите дату визита: готово
-
-Выборка из ДБ для генерации время визита: готово
-
-Пожалуйтса выберите время визита: готово
-
-Взять контакт готово
-
-Послать контакт, дату и время админам бота: готово
-
-Сделать админку и фильр команд для админам бота
+TODO Перевести на русский каленарь
+TODO Выборка из ДБ для генерации календаря
+TODO Сделать админку и фильр команд для админам бота
 
 503415978 375296347998 SerggTech
 5728236318 375291720006 Инга
@@ -32,6 +17,7 @@ from aiogram.types import (
     ParseMode,
 )
 from aiogram.utils import executor
+import aiogram.utils.markdown as fmt
 from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
     simple_cal_callback,
@@ -81,6 +67,7 @@ async def cmd_start(message: types.Message):
         # await message.answer("Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar())
 
 
+# Команда для создания таблиц в базеданых
 @dp.message_handler(commands="db_table_creat")
 async def db_table_creat(message: types.Message):
     await message.answer("Таблицы DB созданы")
@@ -88,7 +75,8 @@ async def db_table_creat(message: types.Message):
     db.creat_admin_profile()
     db.creat_tg_bot_users_recording()
 
-
+# TODO Сделать открытие закрытие записей
+# Команда для выборки открытых записей
 @dp.message_handler(commands="users_open_recording")
 async def users_open_recording(message: types.Message):
     fetch = db.fetch_from_tg_bot_users_open_recording()
@@ -106,7 +94,8 @@ async def users_open_recording(message: types.Message):
         # print(val[0], val[1])
     await message.answer("Выборка открытых записей", reply_markup=kb_inl_status)
 
-
+# TODO Сделать открытие закрытие записей
+# Команда для выборки закрытых записей
 @dp.message_handler(commands="users_close_recording")
 async def users_close_recording(message: types.Message):
     fetch = db.fetch_from_tg_bot_users_close_recording()
@@ -124,7 +113,8 @@ async def users_close_recording(message: types.Message):
         # print(val[0], val[1])
     await message.answer("Выборка закрытых записей", reply_markup=kb_inl_status)
 
-
+# TODO Сделать открытие закрытие записей
+# Команда для выборки всех записей
 @dp.message_handler(commands="users_all_recording")
 async def users_recording(message: types.Message):
     fetch = db.fetch_from_tg_bot_users_all_recording()
@@ -239,10 +229,8 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
         )
         userSelectData.insert(0, date.strftime("%d-%m-%Y"))
 
-
+# TODO Пофиксить "У вас запись 04-09-2022  на Занято Телефон клиента: +375296347998"
 # Генератов расписания времени
-
-
 @dp.callback_query_handler(text="send_work_time")
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
     # Приводим к формату данные
@@ -256,7 +244,6 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
         + format_select_date[2]
     )
     # Если нет записи на эту дату то пишем на кнопке занято
-    # print(db.fetch_from_id_tg_user_select_time(select_date))
 
     kb_inl_work_clock = types.InlineKeyboardMarkup(resize_keyboard=False, row_width=6)
 
@@ -340,20 +327,28 @@ async def msg_handler_to_contact(message: Message):
     user_select_time = str(userSelectData[1])
 
     await message.answer(
-        "Спасибо, " "Мастер свяжется с вами " "В ближайщее время",
+        text=msg.msg_admin_to_user,
         reply_markup=kb_router.kb_start.kb,
+        parse_mode=ParseMode.HTML,
     )
 
     # Отправка сообщений всем админам бота
     for val in db.fetch_from_admin_profile():
+        # Разметка сообщений для админов
+        msg_admin = fmt.text(
+            fmt.text("🎯🎯🎯У вас запись🎯🎯🎯"),
+            fmt.text("на " + user_select_date + " в " + user_select_time),
+            fmt.text("👑👑👑Профиль клента👑👑👑"),
+            fmt.text("@" + message.from_user.username),
+            fmt.text("☎☎☎Телефон клиента☎☎☎"),
+            fmt.text(message.contact.phone_number),
+            sep="\n",
+        )
+
         await bot.send_message(
             chat_id=val,
-            text="У вас запись "
-            + user_select_date
-            + " на "
-            + user_select_time
-            + " Телефон клиента: "
-            + message.contact.phone_number,
+            text=msg_admin,
+            parse_mode=ParseMode.HTML,
         )
 
     user_select_date = user_select_date.split("-")
@@ -389,11 +384,19 @@ async def msg_handler_to_contact(message: Message):
         "open",
     )
 
-
+# TODO Сделать обработку пользовательских сообщений с клавиатуры
+# Обработка всех текстовых сообщений пользователя
 @dp.message_handler(content_types=[types.ContentType.TEXT])
 async def msg_text_contact(message: Message):
+    await message.reply(
+        text="Я 🤖🤖🤖робот🤖🤖🤖 и "
+             "не понимаю человеческий язык "
+             "пожалуйста воспользуйтесь 🔽🔽🔽кнопками меню🔽🔽🔽",
+        reply_markup=kb_router.kb_inl_cmd_start.kb_inl,
+    )
     print(
-        message.text
+        "Набрано человеком "
+        + str(message.text)
         # message.contact.vcard,
         # message.contact.__annotations__,
         # message.__annotations__
