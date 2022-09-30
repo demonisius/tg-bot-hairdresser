@@ -75,6 +75,7 @@ async def db_table_creat(message: types.Message):
     db.creat_admin_profile()
     db.creat_tg_bot_users_recording()
 
+
 # TODO Сделать открытие закрытие записей
 # Команда для выборки открытых записей
 @dp.message_handler(commands="users_open_recording")
@@ -94,6 +95,7 @@ async def users_open_recording(message: types.Message):
         # print(val[0], val[1])
     await message.answer("Выборка открытых записей", reply_markup=kb_inl_status)
 
+
 # TODO Сделать открытие закрытие записей
 # Команда для выборки закрытых записей
 @dp.message_handler(commands="users_close_recording")
@@ -112,6 +114,7 @@ async def users_close_recording(message: types.Message):
         )
         # print(val[0], val[1])
     await message.answer("Выборка закрытых записей", reply_markup=kb_inl_status)
+
 
 # TODO Сделать открытие закрытие записей
 # Команда для выборки всех записей
@@ -228,6 +231,7 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
             reply_markup=kb_router.kb_inl_w_time.kb_inl,
         )
         userSelectData.insert(0, date.strftime("%d-%m-%Y"))
+
 
 # TODO Пофиксить "У вас запись 04-09-2022  на Занято Телефон клиента: +375296347998"
 # Генератов расписания времени
@@ -384,14 +388,15 @@ async def msg_handler_to_contact(message: Message):
         "open",
     )
 
+
 # TODO Сделать обработку пользовательских сообщений с клавиатуры
 # Обработка всех текстовых сообщений пользователя
 @dp.message_handler(content_types=[types.ContentType.TEXT])
 async def msg_text_contact(message: Message):
     await message.reply(
         text="Я 🤖🤖🤖робот🤖🤖🤖 и "
-             "не понимаю человеческий язык "
-             "пожалуйста воспользуйтесь 🔽🔽🔽кнопками меню🔽🔽🔽",
+        "не понимаю человеческий язык "
+        "пожалуйста воспользуйтесь 🔽🔽🔽кнопками меню🔽🔽🔽",
         reply_markup=kb_router.kb_inl_cmd_start.kb_inl,
     )
     print(
