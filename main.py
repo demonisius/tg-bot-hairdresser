@@ -342,7 +342,7 @@ async def msg_handler_to_contact(message: Message):
         msg_admin = fmt.text(
             fmt.text("🎯🎯🎯У вас запись🎯🎯🎯"),
             fmt.text("на " + user_select_date + " в " + user_select_time),
-            fmt.text("👑👑👑Профиль клента👑👑👑"),
+            fmt.text("🧾🧾🧾Профиль клента🧾🧾🧾"),
             fmt.text("@" + message.from_user.username),
             fmt.text("☎☎☎Телефон клиента☎☎☎"),
             fmt.text(message.contact.phone_number),
@@ -394,18 +394,10 @@ async def msg_handler_to_contact(message: Message):
 @dp.message_handler(content_types=[types.ContentType.TEXT])
 async def msg_text_contact(message: Message):
     await message.reply(
-        text="Я 🤖🤖🤖робот🤖🤖🤖 и "
-        "не понимаю человеческий язык "
-        "пожалуйста воспользуйтесь 🔽🔽🔽кнопками меню🔽🔽🔽",
+        text=msg.msg_fo_user_text,
         reply_markup=kb_router.kb_inl_cmd_start.kb_inl,
     )
-    print(
-        "Набрано человеком "
-        + str(message.text)
-        # message.contact.vcard,
-        # message.contact.__annotations__,
-        # message.__annotations__
-    )
+    # print("Набрано человеком " + str(message.text))
 
 
 if __name__ == "__main__":
