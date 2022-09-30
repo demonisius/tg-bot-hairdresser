@@ -358,16 +358,6 @@ async def msg_handler_to_contact(message: Message):
     user_select_date = user_select_date.split("-")
     user_select_time = user_select_time.split("-")
 
-    """
-    print(
-        user_select_date[0],
-        user_select_date[1],
-        user_select_date[2],
-        user_select_time[0],
-        user_select_time[1],
-    )
-    """
-
     db.insert_to_users_profile(
         message.contact.user_id,
         message.contact.phone_number,
@@ -389,7 +379,6 @@ async def msg_handler_to_contact(message: Message):
     )
 
 
-# TODO Сделать обработку пользовательских сообщений с клавиатуры
 # Обработка всех текстовых сообщений пользователя
 @dp.message_handler(content_types=[types.ContentType.TEXT])
 async def msg_text_contact(message: Message):
