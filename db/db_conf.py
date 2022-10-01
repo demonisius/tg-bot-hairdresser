@@ -163,7 +163,6 @@ class ClassForDB:
     # Выборка ИД ТГ Админов
     def fetch_from_admin_profile(self):
         sql = "SELECT id_tg_user_id " "FROM tg_bot_admin_profile "
-
         try:
             res = self.db_cur.execute(sql)
 
@@ -234,12 +233,10 @@ class ClassForDB:
 
     # Выборка всех записей на прием
     def fetch_from_tg_bot_users_all_recording(self):
-
         try:
             res = self.db_cur.execute(
-                "SELECT "
-                "id_tg_user_select_date, id_tg_user_select_time, users_recording_status"
-                " FROM tg_bot_users_recording "
+                "SELECT id_tg_user_select_date, id_tg_user_select_time, users_recording_status "
+                "FROM tg_bot_users_recording "
                 "ORDER BY id_tg_user_select_date"
             )
             # print(res.fetchall())
@@ -250,12 +247,11 @@ class ClassForDB:
 
     # Выборка открытых записей на прием
     def fetch_from_tg_bot_users_open_recording(self):
-
         try:
             res = self.db_cur.execute(
-                "SELECT id_tg_user_select_date, id_tg_user_select_time "
+                "SELECT id_tg_user_select_date, id_tg_user_select_time ,id "
                 "FROM tg_bot_users_recording "
-                "WHERE users_recording_status='open'"
+                "WHERE users_recording_status='open' "
                 "ORDER BY id_tg_user_select_date, id_tg_user_select_time "
             )
             # print(res.fetchall())
@@ -264,9 +260,21 @@ class ClassForDB:
         except Exception:
             print("fetch_from_tg_bot_users_open_recording ERR ")
 
+    def update_from_tg_bot_users_open_recording(self, recording_id):
+        try:
+            sql = (
+                "UPDATE tg_bot_users_recording"
+                " SET users_recording_status = 'close' "
+                " WHERE id = '" + recording_id + "'"
+            )
+            self.db_cur.execute(sql)
+            self.db_conn.commit()
+            pass
+        except Exception:
+            print("update_from_tg_bot_users_open_recording ERR ")
+
     # Выборка закрытых записей на прием
     def fetch_from_tg_bot_users_close_recording(self):
-
         try:
             res = self.db_cur.execute(
                 "SELECT id_tg_user_select_date, id_tg_user_select_time "

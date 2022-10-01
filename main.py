@@ -1,7 +1,7 @@
 """
 TODO Перевести на русский каленарь
 TODO Выборка из ДБ для генерации календаря
-TODO Сделать админку и фильр команд для админам бота
+
 
 503415978 375296347998 SerggTech
 5728236318 375291720006 Инга
@@ -41,6 +41,8 @@ userSelectData = []
 ww1 = config.WorkWindow()
 db = config.db_conf.ClassForDB()
 
+""" Обработка ошибок бота """
+
 
 # Обработка блокировки бота пользователем
 @dp.errors_handler(exception=BotBlocked)
@@ -54,6 +56,8 @@ async def error_bot_blocked(update: types.Update, exception: BotBlocked):
     return True
 
 
+""" Обработка ошибок бота """
+
 """ CMD Команды """
 
 
@@ -64,7 +68,9 @@ async def cmd_start(message: types.Message):
         await message.answer_photo(
             photo=photo, reply_markup=kb_router.kb_inl_cmd_start.kb_inl
         )
-        # await message.answer("Записаться на приём: ", reply_markup=await SimpleCalendar().start_calendar())
+
+
+""" Команды для админов """
 
 
 # Команда для создания таблиц в базеданых
@@ -76,65 +82,90 @@ async def db_table_creat(message: types.Message):
     db.creat_tg_bot_users_recording()
 
 
-# TODO Сделать открытие закрытие записей
+"""Open record ---> Close record"""
+
+
 # Команда для выборки открытых записей
 @dp.message_handler(commands="users_open_recording")
 async def users_open_recording(message: types.Message):
-    fetch = db.fetch_from_tg_bot_users_open_recording()
+    if message.from_user.id in db.fetch_from_admin_profile():
+        fetch = db.fetch_from_tg_bot_users_open_recording()
+        kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
+        for val in fetch:
+            button_inl_status_row = types.InlineKeyboardButton(
+                text=str("Запись " + val[0] + " в " + val[1]),
+                # callback_data=str(val[2]),
+                callback_data=cb_custom.cb_open_recording.new(recording_id=val[2]),
+            )
+            kb_inl_status.insert(button_inl_status_row)
+        await message.answer("Выборка открытых записей", reply_markup=kb_inl_status)
+    else:
+        await message.answer("Вы не являетесь администратором")
 
-    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
 
-    for val in fetch:
-        button_inl_status_row1 = types.InlineKeyboardButton(
-            text=str("Запись " + val[0] + " в " + val[1]),
-            callback_data=str(val[0] + " " + val[1]),
-        )
-        kb_inl_status.insert(
-            button_inl_status_row1,  # button_inl_status_row2   , button_inl_status_row3
-        )
-        # print(val[0], val[1])
-    await message.answer("Выборка открытых записей", reply_markup=kb_inl_status)
+# Обработка нажатий кнопок для закрытия записей
+@dp.callback_query_handler(cb_custom.cb_open_recording.filter())
+async def callbacks_users_open_recording(
+        call: types.CallbackQuery, callback_data: dict
+):
+    # Обработка нажатий кнопок
+    recording_id = callback_data["recording_id"]
+    """ Проверяем коллбэк с кнопки на пустую строку """
+    if not recording_id == " ":
+        # print(recording_id)
+        db.update_from_tg_bot_users_open_recording(recording_id)
+        # await call.message.delete_reply_markup()  # Удаляет клавитуру
+        # await call.message.edit_text("Вы записаны на " + str(w_time))
+        # await call.message.answer(
+        #    "Отправьте свой контакт для связи ",
+        #    reply_markup=kb_router.kb_share_user_contact.kb,
+        # )
+        # userSelectData.insert(1, str(w_time))
+        await call.message.edit_text("Запись успешно отредактирована")
+        await call.message.delete_reply_markup()  # Удаляет клавитуру
+        await call.answer()
+
+    await call.answer()
 
 
-# TODO Сделать открытие закрытие записей
+"""Open record ---> Close record"""
+
+
 # Команда для выборки закрытых записей
 @dp.message_handler(commands="users_close_recording")
 async def users_close_recording(message: types.Message):
-    fetch = db.fetch_from_tg_bot_users_close_recording()
-
-    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
-
-    for val in fetch:
-        button_inl_status_row1 = types.InlineKeyboardButton(
-            text=str("Запись " + val[0] + " в " + val[1]),
-            callback_data=str(val[0] + " " + val[1]),
-        )
-        kb_inl_status.insert(
-            button_inl_status_row1,  # button_inl_status_row2   , button_inl_status_row3
-        )
-        # print(val[0], val[1])
-    await message.answer("Выборка закрытых записей", reply_markup=kb_inl_status)
+    if message.from_user.id in db.fetch_from_admin_profile():
+        fetch = db.fetch_from_tg_bot_users_close_recording()
+        kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
+        for val in fetch:
+            button_inl_status_row = types.InlineKeyboardButton(
+                text=str("Запись " + val[0] + " в " + val[1]),
+                callback_data=str(val[0] + " " + val[1]),
+            )
+            kb_inl_status.insert(button_inl_status_row)
+        await message.answer("Выборка закрытых записей", reply_markup=kb_inl_status)
+    else:
+        await message.answer("Вы не являетесь администратором")
 
 
-# TODO Сделать открытие закрытие записей
 # Команда для выборки всех записей
 @dp.message_handler(commands="users_all_recording")
 async def users_recording(message: types.Message):
-    fetch = db.fetch_from_tg_bot_users_all_recording()
+    if message.from_user.id in db.fetch_from_admin_profile():
+        fetch = db.fetch_from_tg_bot_users_all_recording()
+        kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
+        for val in fetch:
+            button_inl_status_row = types.InlineKeyboardButton(
+                text=str("Запись " + val[0] + " в " + val[1]),
+                callback_data=str(val[0] + " " + val[1]),
+            )
+            kb_inl_status.insert(button_inl_status_row)
+        await message.answer("Выборка всех записей", reply_markup=kb_inl_status)
+    else:
+        await message.answer("Вы не являетесь администратором")
 
-    kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
 
-    for val in fetch:
-        button_inl_status_row1 = types.InlineKeyboardButton(
-            text=str("Запись " + val[0] + " в " + val[1]),
-            callback_data=str(val[0] + " " + val[1]),
-        )
-        kb_inl_status.insert(
-            button_inl_status_row1,  # button_inl_status_row2   , button_inl_status_row3
-        )
-        # print(val[0], val[1])
-    await message.answer("Выборка всех записей", reply_markup=kb_inl_status)
-
+""" Команды для админов """
 
 """ CMD Команды """
 
@@ -241,11 +272,11 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
     format_select_date = userSelectData[0]
     format_select_date = format_select_date.split("-")
     format_select_date = (
-        format_select_date[0]
-        + "."
-        + format_select_date[1]
-        + "."
-        + format_select_date[2]
+            format_select_date[0]
+            + "."
+            + format_select_date[1]
+            + "."
+            + format_select_date[2]
     )
     # Если нет записи на эту дату то пишем на кнопке занято
 
