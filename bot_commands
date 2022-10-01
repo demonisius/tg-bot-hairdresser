@@ -1,0 +1,5 @@
+start - Начало точка входа
+db_table_creat - Создание таблиц в БД
+users_open_recording - Просмотр открытых записей
+users_close_recording - Просмотр закрытых записей
+users_all_recording - Просмотр всех записей
