@@ -35,7 +35,7 @@ bot = Bot(token="5685322861:AAEoKnTXVE_20NudE-RKo-CRCwcIVul9uyY")
 # Диспетчер для бота
 dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 userSelectData = []
 ww1 = config.WorkWindow()
@@ -93,12 +93,11 @@ async def users_open_recording(message: types.Message):
         kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
         for val in fetch:
             button_inl_status_row = types.InlineKeyboardButton(
-                text=str("Запись " + val[0] + " в " + val[1]),
-                # callback_data=str(val[2]),
+                text=str("🔓 " + val[0] + " в " + val[1]),
                 callback_data=cb_custom.cb_open_recording.new(recording_id=val[2]),
             )
             kb_inl_status.insert(button_inl_status_row)
-        await message.answer("Выборка открытых записей", reply_markup=kb_inl_status)
+        await message.answer("Выборка 🔓открытых🔓 записей", reply_markup=kb_inl_status)
     else:
         await message.answer("Вы не являетесь администратором")
 
@@ -106,7 +105,7 @@ async def users_open_recording(message: types.Message):
 # Обработка нажатий кнопок для закрытия записей
 @dp.callback_query_handler(cb_custom.cb_open_recording.filter())
 async def callbacks_users_open_recording(
-        call: types.CallbackQuery, callback_data: dict
+    call: types.CallbackQuery, callback_data: dict
 ):
     # Обработка нажатий кнопок
     recording_id = callback_data["recording_id"]
@@ -114,18 +113,11 @@ async def callbacks_users_open_recording(
     if not recording_id == " ":
         # print(recording_id)
         db.update_from_tg_bot_users_open_recording(recording_id)
-        # await call.message.delete_reply_markup()  # Удаляет клавитуру
-        # await call.message.edit_text("Вы записаны на " + str(w_time))
-        # await call.message.answer(
-        #    "Отправьте свой контакт для связи ",
-        #    reply_markup=kb_router.kb_share_user_contact.kb,
-        # )
-        # userSelectData.insert(1, str(w_time))
         await call.message.edit_text("Запись успешно отредактирована")
         await call.message.delete_reply_markup()  # Удаляет клавитуру
-        await call.answer()
+        await call.answer()  # Удаляет часики на кнопках
 
-    await call.answer()
+    await call.answer()  # Удаляет часики на кнопках
 
 
 """Open record ---> Close record"""
@@ -139,11 +131,11 @@ async def users_close_recording(message: types.Message):
         kb_inl_status = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
         for val in fetch:
             button_inl_status_row = types.InlineKeyboardButton(
-                text=str("Запись " + val[0] + " в " + val[1]),
+                text=str("🔒 " + val[0] + " в " + val[1]),
                 callback_data=str(val[0] + " " + val[1]),
             )
             kb_inl_status.insert(button_inl_status_row)
-        await message.answer("Выборка закрытых записей", reply_markup=kb_inl_status)
+        await message.answer("Выборка 🔒закрытых🔒 записей", reply_markup=kb_inl_status)
     else:
         await message.answer("Вы не являетесь администратором")
 
@@ -183,7 +175,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()
+            await call.answer()  # Удаляет часики на кнопкахх
 
         case "masters":
             await call.message.answer(msg.msg_masters, parse_mode=ParseMode.HTML)
@@ -192,7 +184,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()
+            await call.answer()  # Удаляет часики на кнопкахх
 
         case "contacts":
             await call.message.answer(msg.msg_contacts, parse_mode=ParseMode.HTML)
@@ -201,7 +193,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()
+            await call.answer()  # Удаляет часики на кнопкахх
 
         case "consult":
             await call.message.answer(msg.msg_consult, parse_mode=ParseMode.HTML)
@@ -210,7 +202,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()
+            await call.answer()  # Удаляет часики на кнопкахх
 
         case "sign":
             await call.message.answer(
@@ -218,7 +210,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 reply_markup=await SimpleCalendar().start_calendar(),
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()
+            await call.answer()  # Удаляет часики на кнопкахх
 
         case "back":
             await call.message.delete_reply_markup()
@@ -226,14 +218,16 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()
+            await call.answer()  # Удаляет часики на кнопкахх
 
         case _:
             # Не забываем отчитаться о получении колбэка
-            await call.answer()
+            await call.answer()  # Удаляет часики на кнопкахх
 
 
 """ Start menu """
+
+"""Тут движуха с календарём пока работает не трогать"""
 
 
 @dp.message_handler(Text(equals=["Записаться"], ignore_case=True))
@@ -254,9 +248,6 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
             f'Вы выбрали {date.strftime("%d.%m.%Y")}',
             reply_markup=kb_router.kb_start.kb,
         )
-
-        # await message.answer("Нажмите на кнопку, чтобы бот отправил число от 1 до 10", reply_markup=keyboard)
-
         await callback_query.message.answer(
             "Пожалуйтса выберите время визита:",
             reply_markup=kb_router.kb_inl_w_time.kb_inl,
@@ -264,7 +255,8 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
         userSelectData.insert(0, date.strftime("%d-%m-%Y"))
 
 
-# TODO Пофиксить "У вас запись 04-09-2022  на Занято Телефон клиента: +375296347998"
+"""Тут движуха с календарём пока работает не трогать"""
+
 # Генератов расписания времени
 @dp.callback_query_handler(text="send_work_time")
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
@@ -272,11 +264,11 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
     format_select_date = userSelectData[0]
     format_select_date = format_select_date.split("-")
     format_select_date = (
-            format_select_date[0]
-            + "."
-            + format_select_date[1]
-            + "."
-            + format_select_date[2]
+        format_select_date[0]
+        + "."
+        + format_select_date[1]
+        + "."
+        + format_select_date[2]
     )
     # Если нет записи на эту дату то пишем на кнопке занято
 
@@ -305,24 +297,19 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
         """
         Если есть записи на выбраный день,
         то сравниваем выборку из work_time с выборкой из БД.
-        Если есть совпадениея меняем текст кнопки на занято
+        Если есть совпадениея меняем текст кнопки на 🔒Занято🔒
         """
 
         print("Есть записи на этот день " + str(userSelectData[0]))
 
         for value in ww1.work_hours_graf_1:
-
             if value in db.fetch_from_id_tg_user_select_time(format_select_date):
-
-                # print("Занято на " + str(value))
                 button_inl_work_clock1 = types.InlineKeyboardButton(
-                    text="Занято",
-                    callback_data=cb_custom.cb_work_time.new(w_time="Занято"),
+                    text="🔒Занято🔒",
+                    callback_data=cb_custom.cb_work_time.new(w_time="close"),
                 )
                 kb_inl_work_clock.insert(button_inl_work_clock1)
-
             else:
-
                 button_inl_work_clock1 = types.InlineKeyboardButton(
                     text=value,
                     callback_data=cb_custom.cb_work_time.new(w_time=str(value)),
@@ -331,7 +318,7 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
 
     await call.message.delete_reply_markup()  # Удаляем кнопки
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
-    await call.answer()
+    await call.answer()  # Удаляет часики на кнопках
 
 
 # Обработка нажатий кнопок с рабочим окном
@@ -339,10 +326,13 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
 async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     # Обработка нажатий кнопок
     w_time = callback_data["w_time"]
-    """ Проверяем коллбэк с кнопки на пустую строку """
-    if not w_time == " ":
-        # print(w_time)
 
+    if w_time == "close":  # Проверяем коллбэк с кнопки на CLOSE
+        # Не забываем отчитаться о получении колбэка
+        await call.answer()  # Удаляет часики на кнопкахх
+
+    elif not w_time == " ":  # Проверяем коллбэк с кнопки на пустую строку
+        print(w_time)
         await call.message.delete_reply_markup()  # Удаляет клавитуру
         await call.message.edit_text("Вы записаны на " + str(w_time))
         await call.message.answer(
@@ -350,9 +340,10 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
             reply_markup=kb_router.kb_share_user_contact.kb,
         )
         userSelectData.insert(1, str(w_time))
-        await call.answer()
+        # Не забываем отчитаться о получении колбэка
+        await call.answer()  # Удаляет часики на кнопкахх
 
-    await call.answer()
+    await call.answer()  # Удаляет часики на кнопках
 
 
 # Обработка высланого контакта
@@ -417,7 +408,6 @@ async def msg_text_contact(message: Message):
         text=msg.msg_fo_user_text,
         reply_markup=kb_router.kb_inl_cmd_start.kb_inl,
     )
-    # print("Набрано человеком " + str(message.text))
 
 
 if __name__ == "__main__":

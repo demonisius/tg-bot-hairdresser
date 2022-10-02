@@ -31,41 +31,6 @@ class ClassForDB:
 
     db_conn = sqlite3.connect("db/database.db")
     db_cur = db_conn.cursor()
-    """
-    def __init__(
-            self,
-            id_tg_user_id,
-            id_tg_username,
-            id_tg_first_name,
-            id_tg_last_name,
-            id_tg_phone_number,
-            # id_tg_msg,
-    ):
-        self.id_tg_user_id = id_tg_user_id
-        # self.id_tg_msg = str(id_tg_msg)
-        self.id_tg_username = str(id_tg_username)
-        self.id_tg_first_name = str(id_tg_first_name)
-        self.id_tg_last_name = str(id_tg_last_name)
-        self.id_tg_phone_number = id_tg_phone_number
-    
-    def __str__(self):
-        return str(
-            [
-                [self.id_tg_user_id],
-                # [self.id_tg_msg],
-                [self.id_tg_phone_number],
-                [self.id_tg_username],
-                [self.id_tg_first_name],
-                [self.id_tg_last_name],
-            ]
-        )
-
-   
-    def __del__(self):
-        # Закрываем соединение с ДБ
-        self.db_cur.close()
-        self.db_conn.close()
-    """
 
     # Создание таблицы для профилей пользователей
     def creat_users_profile(self):
@@ -310,61 +275,3 @@ class ClassForDB:
         except Exception:
             print(Exception.message, Exception.args)
             print("fetch_from_id_tg_user_select_time ERR ")
-
-    '''  
-    # Создание таблицы для логирования сообщений
-
-    def table_creat_users_msg(self):
-            try:
-                cur.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS "tg_bot_users_msg" (
-                    "id"	INTEGER,
-                    "id_tg"	INTEGER,
-                    "id_tg_msg"	TEXT,
-                    PRIMARY KEY("id" AUTOINCREMENT)
-                    );
-                    """
-                )
-                conn.commit()
-                return print("tg_bot_users_msg CREAT")
-            except Exception:
-                return print("tg_bot_users_msg ERR")
-
-        # Логирования сообщений
-        def table_insert_to_users_msg(self):
-            try:
-                add_to = (self.id_tg, self.id_tg_msg)
-                cur.execute("INSERT INTO tg_bot_users_msg VALUES(null, ?, ?);", add_to)
-                conn.commit()
-                return print("tg_bot_users_msg ADD " + str(add_to))
-            except Exception:
-                return print("tg_bot_users_msg ERR " + str(add_to))
-
-        def select_id_tg_ms_for_ig_msg(self, id_tg):
-            cur.execute("SELECT * FROM tg_bot_users_msg WHERE id_tg =" + str(id_tg))
-            conn.commit()
-            rows = cur.fetchall()
-            return list(rows)
-'''
-
-
-'''
-db_class = ClassForDB()
-# print(db_class)
-# print(db_class.select_id_tg_ms_for_ig_msg("8628"))
-
-
-db_class.table_creat_users_profile()
-for counter in range(0, 10):
-    db_class.table_insert_to_users_profile()
-
-db_class.table_creat_admin_profile()
-for counter in range(0, 10):
-    db_class.table_insert_to_admin_profile()
-"""
-db_class.table_creat_users_msg()
-for counter in range(0, 10):
-    db_class.table_insert_to_users_msg()
-"""
-'''
