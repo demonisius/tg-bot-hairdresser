@@ -2,7 +2,6 @@
 TODO Перевести на русский каленарь
 TODO Выборка из ДБ для генерации календаря
 
-
 503415978 375296347998 SerggTech
 5728236318 375291720006 Инга
 """
@@ -115,8 +114,9 @@ async def callbacks_users_open_recording(
         db.update_from_tg_bot_users_open_recording(recording_id)
         await call.message.edit_text("Запись успешно отредактирована")
         await call.message.delete_reply_markup()  # Удаляет клавитуру
+        # Не забываем отчитаться о получении колбэка
         await call.answer()  # Удаляет часики на кнопках
-
+    # Не забываем отчитаться о получении колбэка
     await call.answer()  # Удаляет часики на кнопках
 
 
@@ -175,7 +175,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()  # Удаляет часики на кнопкахх
+            await call.answer()  # Удаляет часики на кнопках
 
         case "masters":
             await call.message.answer(msg.msg_masters, parse_mode=ParseMode.HTML)
@@ -184,7 +184,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()  # Удаляет часики на кнопкахх
+            await call.answer()  # Удаляет часики на кнопках
 
         case "contacts":
             await call.message.answer(msg.msg_contacts, parse_mode=ParseMode.HTML)
@@ -193,7 +193,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()  # Удаляет часики на кнопкахх
+            await call.answer()  # Удаляет часики на кнопках
 
         case "consult":
             await call.message.answer(msg.msg_consult, parse_mode=ParseMode.HTML)
@@ -202,7 +202,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()  # Удаляет часики на кнопкахх
+            await call.answer()  # Удаляет часики на кнопках
 
         case "sign":
             await call.message.answer(
@@ -210,7 +210,7 @@ async def callbacks_num(call: types.CallbackQuery):
                 reply_markup=await SimpleCalendar().start_calendar(),
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()  # Удаляет часики на кнопкахх
+            await call.answer()  # Удаляет часики на кнопках
 
         case "back":
             await call.message.delete_reply_markup()
@@ -218,11 +218,11 @@ async def callbacks_num(call: types.CallbackQuery):
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl
             )
             # Не забываем отчитаться о получении колбэка
-            await call.answer()  # Удаляет часики на кнопкахх
+            await call.answer()  # Удаляет часики на кнопках
 
         case _:
             # Не забываем отчитаться о получении колбэка
-            await call.answer()  # Удаляет часики на кнопкахх
+            await call.answer()  # Удаляет часики на кнопках
 
 
 """ Start menu """
@@ -256,6 +256,7 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
 
 
 """Тут движуха с календарём пока работает не трогать"""
+
 
 # Генератов расписания времени
 @dp.callback_query_handler(text="send_work_time")
@@ -318,6 +319,7 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
 
     await call.message.delete_reply_markup()  # Удаляем кнопки
     await call.message.answer("Выберите время: ", reply_markup=kb_inl_work_clock)
+    # Не забываем отчитаться о получении колбэка
     await call.answer()  # Удаляет часики на кнопках
 
 
@@ -329,7 +331,7 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
 
     if w_time == "close":  # Проверяем коллбэк с кнопки на CLOSE
         # Не забываем отчитаться о получении колбэка
-        await call.answer()  # Удаляет часики на кнопкахх
+        await call.answer()  # Удаляет часики на кнопках
 
     elif not w_time == " ":  # Проверяем коллбэк с кнопки на пустую строку
         print(w_time)
@@ -341,8 +343,8 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
         )
         userSelectData.insert(1, str(w_time))
         # Не забываем отчитаться о получении колбэка
-        await call.answer()  # Удаляет часики на кнопкахх
-
+        await call.answer()  # Удаляет часики на кнопках
+    # Не забываем отчитаться о получении колбэка
     await call.answer()  # Удаляет часики на кнопках
 
 

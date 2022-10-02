@@ -2,23 +2,23 @@ from aiogram import types
 
 kb_inl = types.InlineKeyboardMarkup(resize_keyboard=True, row_width=2)
 button_inl_1 = types.InlineKeyboardButton(
-    text="Услуги",
+    text="🧾Услуги🧾",
     callback_data="kbMenuStart_services",
 )
 button_inl_2 = types.InlineKeyboardButton(
-    text="Мастера",
+    text="🧍Мастера🧍",
     callback_data="kbMenuStart_masters",
 )
 button_inl_3 = types.InlineKeyboardButton(
-    text="Контакты",
+    text="☎Контакты☎",
     callback_data="kbMenuStart_contacts",
 )
 button_inl_4 = types.InlineKeyboardButton(
-    text="Косультация",
+    text="☎Косультация☎",
     callback_data="kbMenuStart_consult",
 )
 button_inl_5 = types.InlineKeyboardButton(
-    text="Записаться",
+    text="🧾Записаться🧾",
     callback_data="kbMenuStart_sign",
 )
 

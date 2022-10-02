@@ -33,7 +33,7 @@ msg_masters = fmt.text(
 
 # Разметка для Контактов
 msg_contacts = fmt.text(
-    fmt.text("+375291234567"),
+    fmt.text("☎+375291720006☎"),
     sep="\n",
 )
 
