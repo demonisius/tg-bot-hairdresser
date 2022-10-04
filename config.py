@@ -5,6 +5,10 @@ from aiogram.dispatcher import Dispatcher
 
 from db import db_conf
 
+db_conf.ClassForDB()
+
+# from lib import lib
+
 TOKEN = os.getenv("BOT_TOKEN")
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
@@ -20,11 +24,6 @@ WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 WEBAPP_HOST = "0.0.0.0"
 WEBAPP_PORT = os.getenv("PORT", default=8000)
 DB_URL = os.getenv("DATABASE_URL")
-
-db_conf.ClassForDB
-
-
-# from lib import lib
 
 
 class WorkWindow:
@@ -82,6 +81,7 @@ class WorkWindow:
         for value in self.work_hours_graf_1:
             print(str(value))
         # return self.value
+
 
 # ww1 = WorkWindow()
 # print(ww1.work_hours_graf_1)
