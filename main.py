@@ -6,17 +6,12 @@ TODO Выборка из ДБ для генерации календаря
 5728236318 375291720006 Инга
 """
 
-import logging
-
-from aiogram import Bot, Dispatcher, types
 from aiogram.dispatcher.filters import Text
 from aiogram.types import (
     Message,
     CallbackQuery,
     ParseMode,
 )
-from aiogram.utils import executor
-import aiogram.utils.markdown as fmt
 from aiogram.utils.exceptions import BotBlocked
 from aiogram_calendar import (
     simple_cal_callback,
@@ -29,13 +24,38 @@ import kb_router
 import msg
 from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
 
+"""""" """""" """""" """""" """""" """""" """""" """""" """"""
+
+import logging
+
+import aiogram.utils.markdown as fmt
+from aiogram import types
+from aiogram.utils.executor import start_webhook
+
+import db
+from config import bot, dp, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT
+
+
+async def on_startup(dispatcher):
+    # await database.connect()
+    await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+
+
+async def on_shutdown(dispatcher):
+    # await conn.close()
+    await bot.delete_webhook()
+
+
+"""""" """""" """""" """""" """""" """""" """""" """""" ""
+
+"""
 # Объект бота
 bot = Bot(token="5685322861:AAEoKnTXVE_20NudE-RKo-CRCwcIVul9uyY")
 # Диспетчер для бота
 dp = Dispatcher(bot)
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.DEBUG)
-
+"""
 userSelectData = []
 ww1 = config.WorkWindow()
 db = config.db_conf.ClassForDB()
@@ -104,7 +124,7 @@ async def users_open_recording(message: types.Message):
 # Обработка нажатий кнопок для закрытия записей
 @dp.callback_query_handler(cb_custom.cb_open_recording.filter())
 async def callbacks_users_open_recording(
-    call: types.CallbackQuery, callback_data: dict
+        call: types.CallbackQuery, callback_data: dict
 ):
     # Обработка нажатий кнопок
     recording_id = callback_data["recording_id"]
@@ -265,11 +285,11 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
     format_select_date = userSelectData[0]
     format_select_date = format_select_date.split("-")
     format_select_date = (
-        format_select_date[0]
-        + "."
-        + format_select_date[1]
-        + "."
-        + format_select_date[2]
+            format_select_date[0]
+            + "."
+            + format_select_date[1]
+            + "."
+            + format_select_date[2]
     )
     # Если нет записи на эту дату то пишем на кнопке занято
 
@@ -412,6 +432,20 @@ async def msg_text_contact(message: Message):
     )
 
 
+"""
 if __name__ == "__main__":
     # Запуск бота
     executor.start_polling(dp, skip_updates=True)
+"""
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    start_webhook(
+        dispatcher=dp,
+        webhook_path=WEBHOOK_PATH,
+        skip_updates=True,
+        on_startup=on_startup,
+        on_shutdown=on_shutdown,
+        host=WEBAPP_HOST,
+        port=WEBAPP_PORT,
+    )
