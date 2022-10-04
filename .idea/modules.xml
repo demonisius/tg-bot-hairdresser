@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../tg-bot-SerggOrg/.idea/tg-bot-SerggOrg.iml" filepath="$PROJECT_DIR$/../tg-bot-SerggOrg/.idea/tg-bot-SerggOrg.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/tg-bot-hairdresser.iml" filepath="$PROJECT_DIR$/.idea/tg-bot-hairdresser.iml" />
     </modules>
   </component>
