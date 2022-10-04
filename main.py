@@ -95,11 +95,13 @@ async def cmd_start(message: types.Message):
 # Команда для создания таблиц в базеданых
 @dp.message_handler(commands="db_table_creat")
 async def db_table_creat(message: types.Message):
-    await message.answer("Таблицы DB созданы")
-    db.creat_users_profile()
-    db.creat_admin_profile()
-    db.creat_tg_bot_users_recording()
-
+    if message.from_user.id in db.fetch_from_admin_profile():
+        await message.answer("Таблицы DB созданы")
+        db.creat_users_profile()
+        db.creat_admin_profile()
+        db.creat_tg_bot_users_recording()
+    else:
+        await message.answer("Вы не являетесь администратором")
 
 """Open record ---> Close record"""
 
