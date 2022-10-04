@@ -1,6 +1,6 @@
-aiogram==2.22.2
+aiogram
 aiogram_calendar
-aiohttp==3.8.3
+aiohttp
 aiosignal
 async-timeout
 aioschedule
@@ -8,13 +8,13 @@ asyncio
 asyncpg
 attrs
 Babel
-certifi==2022.9.24
+certifi
 charset-normalizer
 frozenlist
 greenlet
 idna
 multidict
-pytz==2022.4
+pytz
 yarl
 requests
 xmltodict
