@@ -374,7 +374,7 @@ async def msg_handler_to_contact(message: Message):
             fmt.text("🎯🎯🎯У вас запись🎯🎯🎯"),
             fmt.text("на " + user_select_date + " в " + user_select_time),
             fmt.text("🧾🧾🧾Профиль клента🧾🧾🧾"),
-            fmt.text("@" + message.from_user.username),
+            fmt.text(message.from_user.username),
             fmt.text("☎☎☎Телефон клиента☎☎☎"),
             fmt.text(message.contact.phone_number),
             sep="\n",
