@@ -348,7 +348,7 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
         await call.message.delete_reply_markup()  # Удаляем кнопки
         await call.message.edit_text("Вы записаны на " + str(w_time))
         await call.message.answer(
-            "Отправьте свой контакт для связи ",
+            text=msg.msg_share_contact,
             reply_markup=kb_router.kb_share_user_contact.kb,
         )
         userSelectData.insert(1, str(w_time))

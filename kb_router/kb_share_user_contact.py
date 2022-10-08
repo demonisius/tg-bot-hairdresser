@@ -4,5 +4,5 @@ from aiogram.types import (
 )
 
 kb = ReplyKeyboardMarkup(resize_keyboard=True).add(
-    KeyboardButton("Отправить свой контакт ☎️", request_contact=True)
+    KeyboardButton("Отправить контакт ☎", request_contact=True)
 )
