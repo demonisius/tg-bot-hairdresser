@@ -67,9 +67,11 @@ async def error_bot_blocked(update: types.Update, exception: BotBlocked):
 # Команда начало бота, точка входа
 @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message):
-    with open("img/hair-people-logo.png", "rb") as photo:
+    with open("img/start_logo.jpg", "rb") as photo:
         await message.answer_photo(
-            photo=photo, reply_markup=kb_router.kb_inl_cmd_start.kb_inl
+            caption="Описание картинки",
+            photo=photo,
+            reply_markup=kb_router.kb_inl_cmd_start.kb_inl,
         )
 
 
