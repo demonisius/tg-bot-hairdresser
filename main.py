@@ -6,16 +6,17 @@ TODO Выборка из ДБ для генерации календаря
 5728236318 375291720006 Инга
 """
 import logging
-from aiogram import types
+
 import aiogram.utils.markdown as fmt
+from aiogram import types
 from aiogram.dispatcher.filters import Text
 from aiogram.types import (
     Message,
     CallbackQuery,
     ParseMode,
 )
-from aiogram.utils.executor import start_webhook
 from aiogram.utils.exceptions import BotBlocked
+from aiogram.utils.executor import start_webhook
 from aiogram_calendar import (
     simple_cal_callback,
     SimpleCalendar,
@@ -23,10 +24,10 @@ from aiogram_calendar import (
 
 import cb_custom
 import config
-from config import bot, dp, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT
+import db
 import kb_router
 import msg
-import db
+from config import bot, dp, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT
 from kb_router import kb_start, kb_inl_cmd_start, kb_inl_w_time, kb_share_user_contact
 
 
@@ -73,6 +74,7 @@ async def cmd_start(message: types.Message):
             photo=photo,
             reply_markup=kb_router.kb_inl_cmd_start.kb_inl,
         )
+        #
 
 
 """ Команды для админов """
@@ -113,7 +115,7 @@ async def users_open_recording(message: types.Message):
 # Обработка нажатий кнопок для закрытия записей
 @dp.callback_query_handler(cb_custom.cb_open_recording.filter())
 async def callbacks_users_open_recording(
-    call: types.CallbackQuery, callback_data: dict
+        call: types.CallbackQuery, callback_data: dict
 ):
     # Обработка нажатий кнопок
     recording_id = callback_data["recording_id"]
@@ -122,7 +124,7 @@ async def callbacks_users_open_recording(
         # print(recording_id)
         db.update_from_tg_bot_users_open_recording(recording_id)
         await call.message.edit_text("Запись успешно отредактирована")
-        await call.message.delete_reply_markup()  # Удаляет клавитуру
+        await call.message.delete_reply_markup()  # Удаляем кнопки
         # Не забываем отчитаться о получении колбэка
         await call.answer()  # Удаляет часики на кнопках
     # Не забываем отчитаться о получении колбэка
@@ -179,7 +181,7 @@ async def callbacks_num(call: types.CallbackQuery):
     match action:
         case "services":
             await call.message.answer(msg.msg_services, parse_mode=ParseMode.HTML)
-            await call.message.delete_reply_markup()
+            await call.message.delete_reply_markup()  # Удаляем кнопки
             await call.message.answer(
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
@@ -188,7 +190,7 @@ async def callbacks_num(call: types.CallbackQuery):
 
         case "masters":
             await call.message.answer(msg.msg_masters, parse_mode=ParseMode.HTML)
-            await call.message.delete_reply_markup()
+            await call.message.delete_reply_markup()  # Удаляем кнопки
             await call.message.answer(
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
@@ -197,7 +199,7 @@ async def callbacks_num(call: types.CallbackQuery):
 
         case "contacts":
             await call.message.answer(msg.msg_contacts, parse_mode=ParseMode.HTML)
-            await call.message.delete_reply_markup()
+            await call.message.delete_reply_markup()  # Удаляем кнопки
             await call.message.answer(
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
@@ -206,7 +208,7 @@ async def callbacks_num(call: types.CallbackQuery):
 
         case "consult":
             await call.message.answer(msg.msg_consult, parse_mode=ParseMode.HTML)
-            await call.message.delete_reply_markup()
+            await call.message.delete_reply_markup()  # Удаляем кнопки
             await call.message.answer(
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl_back
             )
@@ -222,7 +224,7 @@ async def callbacks_num(call: types.CallbackQuery):
             await call.answer()  # Удаляет часики на кнопках
 
         case "back":
-            await call.message.delete_reply_markup()
+            await call.message.delete_reply_markup()  # Удаляем кнопки
             await call.message.answer(
                 text="Назад", reply_markup=kb_router.kb_inl_cmd_start.kb_inl
             )
@@ -274,11 +276,11 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
     format_select_date = userSelectData[0]
     format_select_date = format_select_date.split("-")
     format_select_date = (
-        format_select_date[0]
-        + "."
-        + format_select_date[1]
-        + "."
-        + format_select_date[2]
+            format_select_date[0]
+            + "."
+            + format_select_date[1]
+            + "."
+            + format_select_date[2]
     )
     # Если нет записи на эту дату то пишем на кнопке занято
 
@@ -339,12 +341,13 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     w_time = callback_data["w_time"]
 
     if w_time == "close":  # Проверяем коллбэк с кнопки на CLOSE
+
         # Не забываем отчитаться о получении колбэка
         await call.answer()  # Удаляет часики на кнопках
 
     elif not w_time == " ":  # Проверяем коллбэк с кнопки на пустую строку
         print(w_time)
-        await call.message.delete_reply_markup()  # Удаляет клавитуру
+        await call.message.delete_reply_markup()  # Удаляем кнопки
         await call.message.edit_text("Вы записаны на " + str(w_time))
         await call.message.answer(
             "Отправьте свой контакт для связи ",
