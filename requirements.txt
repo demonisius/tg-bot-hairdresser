@@ -21,5 +21,4 @@ xmltodict
 bs4
 psycopg2
 pexels_api
-logging
 sqlite3
