@@ -21,4 +21,3 @@ xmltodict
 bs4
 psycopg2
 pexels_api
-sqlite3
