@@ -115,7 +115,7 @@ async def users_open_recording(message: types.Message):
 # Обработка нажатий кнопок для закрытия записей
 @dp.callback_query_handler(cb_custom.cb_open_recording.filter())
 async def callbacks_users_open_recording(
-        call: types.CallbackQuery, callback_data: dict
+    call: types.CallbackQuery, callback_data: dict
 ):
     # Обработка нажатий кнопок
     recording_id = callback_data["recording_id"]
@@ -276,11 +276,11 @@ async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message
     format_select_date = userSelectData[0]
     format_select_date = format_select_date.split("-")
     format_select_date = (
-            format_select_date[0]
-            + "."
-            + format_select_date[1]
-            + "."
-            + format_select_date[2]
+        format_select_date[0]
+        + "."
+        + format_select_date[1]
+        + "."
+        + format_select_date[2]
     )
     # Если нет записи на эту дату то пишем на кнопке занято
 
@@ -341,10 +341,8 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     w_time = callback_data["w_time"]
 
     if w_time == "close":  # Проверяем коллбэк с кнопки на CLOSE
-
         # Не забываем отчитаться о получении колбэка
         await call.answer()  # Удаляет часики на кнопках
-
     elif not w_time == " ":  # Проверяем коллбэк с кнопки на пустую строку
         print(w_time)
         await call.message.delete_reply_markup()  # Удаляем кнопки
