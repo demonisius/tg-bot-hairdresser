@@ -379,7 +379,7 @@ async def msg_handler_to_contact(message: Message):
             fmt.text("🧾🧾🧾Профиль клента🧾🧾🧾"),
             fmt.text("@" + str(message.from_user.username)),
             fmt.text("☎☎☎Телефон клиента☎☎☎"),
-            fmt.text("+" + str(message.contact.phone_number)),
+            fmt.text(str(message.contact.phone_number)),
             sep="\n",
         )
 
