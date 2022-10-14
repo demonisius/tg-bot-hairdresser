@@ -269,7 +269,7 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
 """Тут движуха с календарём пока работает не трогать"""
 
 
-# Генератов расписания времени
+# Генератор расписания времени
 @dp.callback_query_handler(text="send_work_time")
 async def send_work_cal_handler(call: types.CallbackQuery):  # (message: Message):
     # Приводим к формату данные
