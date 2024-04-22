@@ -54,12 +54,12 @@ class ClassForDB:
 
     # Добаление нового профиля пользователя
     def insert_to_users_profile(
-            self,
-            id_tg_user_id,
-            id_tg_phone_number,
-            id_tg_username,
-            id_tg_first_name,
-            id_tg_last_name,
+        self,
+        id_tg_user_id,
+        id_tg_phone_number,
+        id_tg_username,
+        id_tg_first_name,
+        id_tg_last_name,
     ):
         try:
             add_to = (
@@ -101,12 +101,12 @@ class ClassForDB:
 
     # Добаление админиситраторов бота
     def insert_to_admin_profile(
-            self,
-            id_tg_user_id,
-            id_tg_phone_number,
-            id_tg_username,
-            id_tg_first_name,
-            id_tg_last_name,
+        self,
+        id_tg_user_id,
+        id_tg_phone_number,
+        id_tg_username,
+        id_tg_first_name,
+        id_tg_last_name,
     ):
         try:
             add_to = (
@@ -164,17 +164,16 @@ class ClassForDB:
 
     # Добаление записей на прием
     def insert_to_tg_bot_users_recording(
-            self,
-            id_tg_user_id,
-            id_tg_phone_number,
-            id_tg_username,
-            id_tg_first_name,
-            id_tg_last_name,
-            id_tg_user_select_date,
-            id_tg_user_select_time,
-            users_recording_status,
+        self,
+        id_tg_user_id,
+        id_tg_phone_number,
+        id_tg_username,
+        id_tg_first_name,
+        id_tg_last_name,
+        id_tg_user_select_date,
+        id_tg_user_select_time,
+        users_recording_status,
     ):
-
         try:
             add_to = (
                 id_tg_user_id,
@@ -227,9 +226,9 @@ class ClassForDB:
     def update_from_tg_bot_users_open_recording(self, recording_id):
         try:
             sql = (
-                    "UPDATE tg_bot_users_recording"
-                    " SET users_recording_status = 'close' "
-                    " WHERE id = '" + recording_id + "'"
+                "UPDATE tg_bot_users_recording"
+                " SET users_recording_status = 'close' "
+                " WHERE id = '" + recording_id + "'"
             )
             self.db_cur.execute(sql)
             self.db_conn.commit()
@@ -255,10 +254,10 @@ class ClassForDB:
     def fetch_from_id_tg_user_select_time(self, select_date):
         # print('def '+select_date)
         sql = (
-                "SELECT id_tg_user_select_time "
-                "FROM tg_bot_users_recording "
-                "WHERE id_tg_user_select_date = '" + select_date + "' "
-                                                                   "ORDER BY id_tg_user_select_date, id_tg_user_select_time "
+            "SELECT id_tg_user_select_time "
+            "FROM tg_bot_users_recording "
+            "WHERE id_tg_user_select_date = '" + select_date + "' "
+            "ORDER BY id_tg_user_select_date, id_tg_user_select_time "
         )
 
         try:

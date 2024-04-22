@@ -32,13 +32,13 @@ class CLASSDB:
     """
 
     def __init__(
-            self,
-            id_tg_user_id,
-            # id_tg_msg,
-            id_tg_phone_number,
-            id_tg_username,
-            id_tg_first_name,
-            id_tg_last_name,
+        self,
+        id_tg_user_id,
+        # id_tg_msg,
+        id_tg_phone_number,
+        id_tg_username,
+        id_tg_first_name,
+        id_tg_last_name,
     ):
         self.id_tg_user_id = id_tg_user_id
         # self.id_tg_msg = str(id_tg_msg)
