@@ -358,6 +358,7 @@ async def callbacks_work_time(call: types.CallbackQuery, callback_data: dict):
     await call.answer()  # Удаляет часики на кнопках
 
 
+
 # Обработка высланого контакта
 @dp.message_handler(content_types=[types.ContentType.CONTACT])
 async def msg_handler_to_contact(message: Message):
